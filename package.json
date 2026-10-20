@@ -1,0 +1,76 @@
+{
+  "name": "arzdesk",
+  "version": "0.5.0",
+  "description": "An open-source, multi-tenant business workspace for small teams and freelancers.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --import tsx scripts/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:seed": "node --import tsx scripts/seed.ts"
+  },
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "postgresql",
+    "open-source",
+    "project-management"
+  ],
+  "author": "ArzCore Technologies",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@radix-ui/react-slot": "1.5.0",
+    "better-auth": "1.7.11",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "drizzle-orm": "0.45.4",
+    "lucide-react": "1.59.0",
+    "next": "16.4.2",
+    "nodemailer": "10.1.7",
+    "pg": "8.23.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.6.5",
+    "@types/nodemailer": "8.0.2",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "5.0.5",
+    "dotenv": "18.0.8",
+    "drizzle-kit": "0.31.11",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.2",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a60ukarim/ArzDesk.git"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

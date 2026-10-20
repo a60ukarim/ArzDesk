@@ -1,0 +1,17 @@
+name: Bug report
+description: Report a reproducible problem in ArzDesk.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include expected behavior and steps to reproduce. Never include secrets or private tenant data.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: ArzDesk version, browser, OS, Node.js version
+    validations:
+      required: true
