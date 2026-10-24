@@ -1,30 +1,69 @@
-/* Network-only application: account pages and API responses are never cached. */
-self.addEventListener("install", (event) =>
-  event.waitUntil(self.skipWaiting()),
-);
-self.addEventListener("activate", (event) =>
-  event.waitUntil(self.clients.claim()),
-);
-self.addEventListener("fetch", (event) => {
-  if (
-    event.request.method !== "GET" ||
-    event.request.mode !== "navigate" ||
-    new URL(event.request.url).origin !== self.location.origin
-  )
-    return;
-  event.respondWith(
-    fetch(event.request, { cache: "no-store" }).catch(
-      () =>
-        new Response(
-          `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>You're offline · ArzDesk</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#dfe4ec;color:#1b2340;font:16px system-ui,sans-serif}main{max-width:420px;margin:24px;padding:32px;border-radius:20px;background:#f6f8fc}h1{font-size:28px}p{line-height:1.7}a{display:inline-block;background:#5145d9;color:white;padding:12px 22px;border-radius:10px;text-decoration:none}</style></head><body><main><strong>ArzDesk</strong><h1>You're offline</h1><p>Reconnect to the internet to open your workspace and continue working.</p><a href="/start">Try again</a></main></body></html>`,
-          {
-            status: 200,
-            headers: {
-              "Content-Type": "text/html; charset=utf-8",
-              "Cache-Control": "no-store",
-            },
-          },
-        ),
-    ),
+/* Only the public offline shell and build assets are cached. Never account/API responses. */
+importScripts("/offline-assets.js");
+const build = self.ARZDESK_OFFLINE_BUILD;
+const cacheName = `arzdesk-shell-${build.version}`;
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(cacheName);
+      try {
+        // Separate fetches keep authenticated cookies out of the offline document.
+        await Promise.all(
+          build.assets.map(async (path) => {
+            const response = await fetch(path, {
+              credentials: "omit",
+              cache: "reload",
+            });
+            if (!response.ok)
+              throw new Error(`Offline asset unavailable: ${path}`);
+            await cache.put(path, response);
+          }),
+        );
+        await cache.put("/offline-ready", new Response(build.version));
+        await self.skipWaiting();
+      } catch (error) {
+        await caches.delete(cacheName);
+        throw error;
+      }
+    })(),
   );
+});
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    (async () => {
+      // Keep the previous build too, so already-open tabs retain their lazy chunks.
+      const previous = (await caches.keys()).filter(
+        (key) => key.startsWith("arzdesk-shell-") && key !== cacheName,
+      );
+      await Promise.all(previous.slice(0, -1).map((key) => caches.delete(key)));
+      await self.clients.claim();
+    })(),
+  );
+});
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== "GET" || url.origin !== self.location.origin)
+    return;
+  if (url.pathname === "/offline" && event.request.mode === "navigate") {
+    event.respondWith(
+      (async () =>
+        (await (await caches.open(cacheName)).match("/offline")) ||
+        fetch(event.request))(),
+    );
+    return;
+  }
+  if (build.assets.includes(url.pathname) && url.pathname !== "/offline") {
+    event.respondWith(
+      (async () =>
+        (await caches.match(url.pathname)) || fetch(event.request))(),
+    );
+    return;
+  }
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" }).catch(() =>
+        Response.redirect(new URL("/offline", self.location.origin).href),
+      ),
+    );
+  }
 });

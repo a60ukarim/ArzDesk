@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ArzDesk",
     short_name: "ArzDesk",
     description: "Your clients, projects and tasks in one workspace.",
-    start_url: "/start",
+    start_url: "/offline",
     scope: "/",
     display: "standalone",
     background_color: "#dfe4ec",

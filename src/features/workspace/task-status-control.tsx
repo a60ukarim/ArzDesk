@@ -1,7 +1,6 @@
 "use client";
 import { useId, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { mutate } from "./actions";
+import { useWorkspaceRuntime } from "./runtime";
 import { useFeedback } from "@/components/feedback-provider";
 type TaskStatus = "todo" | "in_progress" | "done";
 type ProjectStatus = "planned" | "active" | "completed";
@@ -19,7 +18,7 @@ function StatusControl({
   entity: "task" | "project";
 }) {
   const selectId = useId();
-  const router = useRouter();
+  const { router, mutate } = useWorkspaceRuntime();
   const { notify } = useFeedback();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");

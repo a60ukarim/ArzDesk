@@ -1,11 +1,10 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useWorkspaceRuntime } from "./runtime";
 import Link from "next/link";
 import { Building2, Users, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFeedback } from "@/components/feedback-provider";
-import { mutate } from "./actions";
 import type { Role } from "./policy";
 export function WorkspaceSettings({
   orgId,
@@ -20,7 +19,7 @@ export function WorkspaceSettings({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const { notify } = useFeedback();
-  const router = useRouter();
+  const { router, mutate, local } = useWorkspaceRuntime();
   return (
     <div className="settings-grid">
       <section className="panel settings-card">
@@ -97,26 +96,30 @@ export function WorkspaceSettings({
           </>
         )}
       </section>
-      <section className="panel settings-card">
-        <div className="settings-card-heading">
-          <span className="entity-icon">
-            <Users size={19} />
-          </span>
-          <div>
-            <h2>Team access</h2>
-            <p>Choose who can work in this workspace.</p>
+      {local ? (
+        local.settings
+      ) : (
+        <section className="panel settings-card">
+          <div className="settings-card-heading">
+            <span className="entity-icon">
+              <Users size={19} />
+            </span>
+            <div>
+              <h2>Team access</h2>
+              <p>Choose who can work in this workspace.</p>
+            </div>
           </div>
-        </div>
-        <p className="settings-description">
-          Invite colleagues and manage their roles from the Team page.
-        </p>
-        <Button asChild variant="outline">
-          <Link href={`/w/${orgId}/team`}>
-            Open team
-            <ArrowRight size={15} />
-          </Link>
-        </Button>
-      </section>
+          <p className="settings-description">
+            Invite colleagues and manage their roles from the Team page.
+          </p>
+          <Button asChild variant="outline">
+            <Link href={`/w/${orgId}/team`}>
+              Open team
+              <ArrowRight size={15} />
+            </Link>
+          </Button>
+        </section>
+      )}
     </div>
   );
 }

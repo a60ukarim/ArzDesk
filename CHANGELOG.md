@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.0] — 2026-10-24
+
+Local device workspaces with transactional IndexedDB storage, full client/project/task workflows, JSON backup export and non-destructive import, an authenticated one-way copy from online accounts, and a versioned offline application shell. No automatic synchronization, desktop installer or mobile binary. Compact safe-area toast with its close control aligned at the edge. See [offline guide](docs/offline.ar.md).
+
 ## [0.4.4] — 2026-10-20
 
 Configured development network origins for phone testing, POST-only unhydrated auth-form fallback, legacy sign-in query cleanup and theme-toggle compatibility. No schema or dependency changes. See [release notes](docs/releases/v0.4.4.md).

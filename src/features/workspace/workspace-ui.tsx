@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useWorkspaceRuntime } from "./runtime";
 import {
   Users,
   FolderKanban,
@@ -94,7 +94,7 @@ export function WorkspaceUI({
   section: Section;
   context?: { clientId?: string; projectId?: string };
 }) {
-  const router = useRouter();
+  const { router, local } = useWorkspaceRuntime();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const orgId = data.organization.id;
@@ -102,7 +102,7 @@ export function WorkspaceUI({
   const writable = can(role, "write");
   const deletable = can(role, "delete");
   const invitable = can(role, "invite");
-  const base = `/w/${orgId}`;
+  const base = local?.base ?? `/w/${orgId}`;
   const selectedClient = data.clients.find((c) => c.id === context.clientId);
   const selectedProject = data.projects.find((p) => p.id === context.projectId);
   const setupComplete =
@@ -1093,7 +1093,7 @@ export function WorkspaceUI({
           role={role}
         />
       )}
-      {section === "team" && (
+      {section === "team" && !local && (
         <>
           <section className="panel">
             <div className="panel-head">

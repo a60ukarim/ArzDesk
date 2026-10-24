@@ -278,8 +278,18 @@ test("a team can register, organize real work, invite a viewer and revoke access
       "Team",
       "Settings",
     ]) {
+      if (width <= 1100)
+        await page
+          .getByRole("button", { name: "Open workspace menu", exact: true })
+          .click();
       await page
-        .getByRole("navigation", { name: "Workspace navigation" })
+        .getByRole("navigation", {
+          name:
+            width <= 1100
+              ? "Mobile workspace navigation"
+              : "Workspace navigation",
+          exact: true,
+        })
         .getByRole("link", { name, exact: true })
         .click();
       await expect(
@@ -802,9 +812,14 @@ test("profile saves name, confirms email, changes password and logs out", async 
     });
     if (width > 1100) expect(await page.evaluate(() => window.scrollY)).toBe(0);
     else expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    const box = await page
-      .getByRole("navigation", { name: "Workspace navigation" })
-      .boundingBox();
+    const box = await (
+      width > 1100
+        ? page.getByRole("navigation", {
+            name: "Workspace navigation",
+            exact: true,
+          })
+        : page.getByRole("button", { name: "Open workspace menu", exact: true })
+    ).boundingBox();
     expect(box!.y).toBeGreaterThanOrEqual(0);
     expect(box!.y + box!.height).toBeLessThan(400);
   }
@@ -1068,7 +1083,7 @@ test("a touch browser can load dev assets, create an account and sign in on the 
   await expect(page).toHaveURL(/\/w\/[^/]+(?:\/overview)?$/);
   await page.reload();
   await expect(
-    page.getByRole("navigation", { name: "Workspace navigation", exact: true }),
+    page.getByRole("button", { name: "Open workspace menu", exact: true }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Open account menu", exact: true })

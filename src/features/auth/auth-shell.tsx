@@ -71,6 +71,7 @@ export function AuthShell({
       </div>
       <footer className="auth-footer">
         <span>ArzDesk · Built by ArzCore Technologies</span>
+        <a href="/offline">Work offline on this device</a>
         <Link href="/install">Install ArzDesk</Link>
       </footer>
     </main>

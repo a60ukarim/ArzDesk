@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
 import { AccountMenu } from "@/components/account-menu";
 import { Brand } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { useWorkspaceRuntime } from "./runtime";
 import { QuickGuide } from "./quick-guide";
 const sections = [
   {
@@ -53,12 +54,12 @@ export function WorkspaceShell({
   person: { name: string; email: string };
 }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { router, local } = useWorkspaceRuntime();
   const drawer = useRef<HTMLDialogElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
-  const section = pathname.split("/")[3] || "overview";
-  const base = `/w/${organization.id}`;
+  const section = local?.section ?? (pathname.split("/")[3] || "overview");
+  const base = local?.base ?? `/w/${organization.id}`;
   function closeMenu() {
     drawer.current?.close();
   }
@@ -70,25 +71,27 @@ export function WorkspaceShell({
     desktop.addEventListener("change", closeOnDesktop);
     return () => desktop.removeEventListener("change", closeOnDesktop);
   }, []);
-  const navigation = sections.map((s) => (
-    <Link
-      key={s.id}
-      href={`${base}/${s.id}`}
-      aria-label={s.label}
-      aria-current={section === s.id ? "page" : undefined}
-      className={section === s.id ? "active" : ""}
-      prefetch={false}
-      onMouseEnter={() => router.prefetch(`${base}/${s.id}`)}
-      onFocus={() => router.prefetch(`${base}/${s.id}`)}
-      onClick={closeMenu}
-    >
-      <s.icon size={17} />
-      <span className="nav-copy">
-        <strong>{s.label}</strong>
-        <small>{s.detail}</small>
-      </span>
-    </Link>
-  ));
+  const navigation = sections
+    .filter((s) => !local || s.id !== "team")
+    .map((s) => (
+      <Link
+        key={s.id}
+        href={`${base}/${s.id}`}
+        aria-label={s.label}
+        aria-current={section === s.id ? "page" : undefined}
+        className={section === s.id ? "active" : ""}
+        prefetch={false}
+        onMouseEnter={() => router.prefetch(`${base}/${s.id}`)}
+        onFocus={() => router.prefetch(`${base}/${s.id}`)}
+        onClick={closeMenu}
+      >
+        <s.icon size={17} />
+        <span className="nav-copy">
+          <strong>{s.label}</strong>
+          <small>{s.detail}</small>
+        </span>
+      </Link>
+    ));
   return (
     <div className="app-shell">
       <a href="#main-content" className="sr-only focus:not-sr-only">
@@ -105,7 +108,7 @@ export function WorkspaceShell({
         <div className="sidebar-workspace">
           <span className="eyebrow">CURRENT WORKSPACE</span>
           <strong>{organization.name}</strong>
-          <Link href="/workspaces">
+          <Link href={local ? "/offline#" : "/workspaces"}>
             Switch workspace <ArrowRight size={14} />
           </Link>
         </div>
@@ -146,7 +149,7 @@ export function WorkspaceShell({
         <div className="sidebar-workspace">
           <span className="eyebrow">CURRENT WORKSPACE</span>
           <strong dir="auto">{organization.name}</strong>
-          <Link href="/workspaces" onClick={closeMenu}>
+          <Link href={local ? "/offline#" : "/workspaces"} onClick={closeMenu}>
             Switch workspace <ArrowRight size={14} />
           </Link>
         </div>
@@ -190,8 +193,12 @@ export function WorkspaceShell({
               onChange={(e) =>
                 router.push(
                   e.target.value === "all-workspaces"
-                    ? "/workspaces"
-                    : `/w/${e.target.value}/overview`,
+                    ? local
+                      ? "/offline#"
+                      : "/workspaces"
+                    : local
+                      ? `/offline#${e.target.value}/overview`
+                      : `/w/${e.target.value}/overview`,
                 )
               }
             >
@@ -202,7 +209,11 @@ export function WorkspaceShell({
               ))}
               <option value="all-workspaces">All workspaces…</option>
             </select>
-            <AccountMenu person={person} />
+            {local ? (
+              <span className="local-device-badge">On this device</span>
+            ) : (
+              <AccountMenu person={person} />
+            )}
           </div>
         </header>
         {children}

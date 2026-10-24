@@ -1,9 +1,8 @@
 "use client";
 import { useId, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useWorkspaceRuntime } from "./runtime";
 import { Plus, Pencil, Trash2, X, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mutate } from "./actions";
 import { useFeedback } from "@/components/feedback-provider";
 export type Field = {
   name: string;
@@ -65,7 +64,7 @@ export function EntityDialog({
   const basicFields = fields.filter((f) => !f.advanced);
   const extraFields = fields.filter((f) => f.advanced);
   const dialog = useRef<HTMLDialogElement>(null);
-  const router = useRouter();
+  const { router, mutate } = useWorkspaceRuntime();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [token, setToken] = useState("");

@@ -1257,33 +1257,42 @@ tbody tr:hover {
 .feedback-toast {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
   z-index: 2000;
-  display: flex;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 32px;
   align-items: center;
   gap: 10px;
-  padding: 14px 17px;
+  width: max-content;
+  max-width: min(380px, calc(100vw - 32px));
+  padding: 10px 12px;
   border: 1px solid light-dark(#d2e4d9, #304b3a);
   background: light-dark(#f6fcf8, #18251d);
   color: light-dark(#35684e, #bbddcc);
-  box-shadow: 0 8px 30px light-dark(#18213612, #18213612);
-  border-radius: 10px;
+  box-shadow: 0 8px 30px #1821361a;
+  border-radius: 14px;
   font-size: 12px;
-  max-width: calc(100vw - 32px);
+  line-height: 1.5;
   pointer-events: none;
 }
-.feedback-toast > svg {
-  flex-shrink: 0;
+.feedback-toast > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .feedback-toast button {
   display: grid;
   place-items: center;
+  width: 32px;
+  height: 32px;
   border: 0;
+  border-radius: 8px;
   background: transparent;
-  padding: 3px;
-  margin-left: 8px;
+  padding: 0;
   color: inherit;
   pointer-events: auto;
+}
+.feedback-toast button:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 .guide-examples {
   list-style: none;
@@ -2302,11 +2311,11 @@ tbody tr:hover {
     min-height: 44px;
   }
   .feedback-toast {
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    max-width: none;
-    align-items: flex-start;
+    left: 50%;
+    right: auto;
+    bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+    transform: translateX(-50%);
+    max-width: calc(100vw - 32px);
   }
   .settings-card {
     padding: 22px 19px;
@@ -3722,5 +3731,77 @@ body:has(.workspace-drawer[open]) {
 @media (prefers-reduced-motion: reduce) {
   .workspace-drawer[open] {
     animation: none;
+  }
+}
+
+.local-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.local-status > a {
+  margin-left: auto;
+  color: var(--primary);
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.local-device-badge {
+  font-size: 10px;
+  max-width: 60px;
+  color: var(--muted);
+}
+.local-message {
+  margin: 16px 20px;
+}
+.local-create {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  margin: 24px 0;
+  max-width: 600px;
+}
+.local-backup {
+  display: grid;
+  gap: 14px;
+}
+.local-backup > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.local-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.local-actions label {
+  cursor: pointer;
+}
+.local-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.local-online-link {
+  color: var(--primary);
+  font-size: 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.local-workspace-content {
+  min-width: 0;
+}
+@media (min-width: 1101px) {
+  .app-main > .local-workspace-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
 }

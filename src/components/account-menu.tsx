@@ -106,6 +106,9 @@ export function AccountMenu({
             Install ArzDesk
           </Link>
         </nav>
+        <a href="/offline" className="drawer-install" onClick={close}>
+          Work on this device (offline)
+        </a>
         <div className="drawer-logout">
           <SignOut />
           <p>Log out on this browser.</p>

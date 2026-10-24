@@ -12,7 +12,9 @@ export default defineConfig({
   use: { baseURL: "http://localhost:3000", trace: "retain-on-failure" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run dev",
+    command: process.env.ARZDESK_TEST_DEV
+      ? "npm run dev -- --hostname 127.0.0.1"
+      : "npm run start -- --hostname 127.0.0.1",
     url: "http://localhost:3000/sign-in",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

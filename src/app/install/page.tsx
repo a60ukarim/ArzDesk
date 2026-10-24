@@ -22,14 +22,18 @@ export default function Page() {
         <span className="eyebrow">YOUR WORK. ONE TAP AWAY.</span>
         <h1>ArzDesk, on your device.</h1>
         <p>
-          Keep ArzDesk on your desktop or home screen. Sign in to the same
-          account to access your workspaces on any device.
+          Keep ArzDesk on your desktop or home screen. Work on this device
+          without internet, or sign in for shared online workspaces.
         </p>
         <div className="install-actions">
           <AppInstall />
+          <a className="btn btn-outline" href="/offline">
+            Open device workspace
+          </a>
         </div>
         <small>
-          An internet connection is needed to work with your account and data.
+          Open the device workspace online once to prepare offline access.
+          Device work stays local; team accounts need internet.
         </small>
       </section>
       <section
