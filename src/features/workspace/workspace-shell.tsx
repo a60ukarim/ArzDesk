@@ -154,7 +154,6 @@ export function WorkspaceShell({
       <div className="app-main">
         <header className="topbar">
           <div className="mobile-workspace-heading">
-            <Brand />
             <button
               type="button"
               className="workspace-menu-trigger"
@@ -170,6 +169,7 @@ export function WorkspaceShell({
               <Menu size={21} />
               <span>Menu</span>
             </button>
+            <Brand />
           </div>
           <div className="breadcrumb">
             <Building2 size={15} />
