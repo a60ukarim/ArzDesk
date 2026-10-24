@@ -10,7 +10,7 @@ export function AccountBack() {
       aria-label="Back"
       className="back-workspace"
       onClick={() => {
-        let target = "/start";
+        let target = "/cloud";
         try {
           const saved = sessionStorage.getItem("arzdesk-account-return") || "";
           // Only known local application pages are valid return destinations.

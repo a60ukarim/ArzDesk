@@ -23,7 +23,7 @@ export function AuthForm({
   const destination =
     next.startsWith("/invite/") && /^\/invite\/[a-f0-9]{64}$/.test(next)
       ? next
-      : "/start";
+      : "/cloud";
   const isSignUp = mode === "sign-up";
   return (
     <div className="auth-card">

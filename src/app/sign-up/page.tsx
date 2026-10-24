@@ -8,7 +8,7 @@ export default async function Page({
   const { next } = await searchParams;
   return (
     <AuthShell view="sign-up">
-      <AuthForm mode="sign-up" next={next ?? "/start"} />
+      <AuthForm mode="sign-up" next={next ?? "/cloud"} />
     </AuthShell>
   );
 }

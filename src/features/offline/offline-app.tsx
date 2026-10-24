@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
 import { z } from "zod";
 import {
   Plus,
@@ -263,7 +262,7 @@ export function OfflineApp() {
         Importing adds copies and never replaces existing work. Team invitations
         and passwords are not included.
       </p>
-      <a href="/start" className="local-online-link">
+      <a href="/cloud" className="local-online-link">
         Open online account →
       </a>
     </section>
@@ -276,7 +275,7 @@ export function OfflineApp() {
           ? "Ready for offline use · Saved on this device"
           : "Saved on this device · Preparing offline access…"}
       </span>
-      <Link href="/offline#">Your workspaces</Link>
+      <a href="/offline#">Your workspaces</a>
     </div>
   );
   const messages = (

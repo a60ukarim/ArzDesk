@@ -1,7 +1,7 @@
 "use client";
 import { workflowExample } from "./examples";
 import { useRef } from "react";
-import Link from "next/link";
+import { WorkspaceLink as Link } from "./runtime";
 import { CircleHelp, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 export function QuickGuide({ base }: { base: string }) {

@@ -4,11 +4,11 @@
 
 An open-source, multi-tenant business workspace for small teams and freelancers, built by ArzCore Technologies.
 
-Version **0.6.0** adds a complete local workspace mode at `/offline`: use clients, projects and tasks without a login or network connection, after the initial shell download. Read the [offline guide](docs/offline.ar.md) and [release notes](docs/releases/v0.6.0.md). Shared online accounts remain available; local changes do not automatically sync.
+Version **0.6.1** adds a complete local workspace mode at `/offline`: use clients, projects and tasks without a login or network connection, after the initial shell download. Read the [offline guide](docs/offline.ar.md) and [release notes](docs/releases/v0.6.1.md). Shared online accounts remain available; local changes do not automatically sync.
 
 ## Device workspaces
 
-Open `/offline` online once and wait for **Ready for offline use** before disconnecting. Multiple workspaces, client/project/task CRUD, filters, statuses, dashboard counts and workspace renaming use IndexedDB transactions on the device. Export JSON backups and import them as additional workspaces without replacing existing records. **Copy online workspaces** requires a signed-in online session and makes independent local copies; it never uploads local changes. Devices and browser profiles have separate stores. Clearing site storage or losing the device can erase local work; keep exported backups. Team sharing and authentication require internet. EXE/APK packaging and automatic synchronization are not included.
+The root address and legacy `/start` launch device mode; `/cloud` opens online accounts. Local navigation uses native hash links without server router requests. Open `/offline` online once and wait for **Ready for offline use** before disconnecting. Multiple workspaces, client/project/task CRUD, filters, statuses, dashboard counts and workspace renaming use IndexedDB transactions on the device. Export JSON backups and import them as additional workspaces without replacing existing records. **Copy online workspaces** requires a signed-in online session and makes independent local copies; it never uploads local changes. Devices and browser profiles have separate stores. Clearing site storage or losing the device can erase local work; keep exported backups. Team sharing and authentication require internet. EXE/APK packaging and automatic synchronization are not included.
 
 The service worker precaches only the public `/offline` shell, local fonts, product images and build assets. It never caches account pages, authenticated snapshots or API responses. `npm run build` generates the versioned asset list after Next.js finishes; serve the resulting app over HTTPS (or localhost for development).
 

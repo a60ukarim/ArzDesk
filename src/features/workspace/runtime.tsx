@@ -1,5 +1,7 @@
 "use client";
 import { createContext, useContext } from "react";
+import Link from "next/link";
+import type { ComponentProps } from "react";
 import { useRouter } from "next/navigation";
 import { mutate as serverMutate } from "./actions";
 import type { ActionResult } from "./actions";
@@ -31,4 +33,13 @@ export function useWorkspaceRuntime() {
         }
       : router,
   };
+}
+
+// Hash links in device workspaces never invoke the server router or prefetch RSC.
+export function WorkspaceLink({
+  prefetch,
+  ...props
+}: ComponentProps<"a"> & { href: string; prefetch?: boolean }) {
+  const local = useContext(WorkspaceRuntime);
+  return local ? <a {...props} /> : <Link {...props} prefetch={prefetch} />;
 }

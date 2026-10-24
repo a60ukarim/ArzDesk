@@ -13,7 +13,7 @@ export default async function Page({
     <AuthShell view="sign-in">
       <AuthForm
         mode="sign-in"
-        next={next ?? "/start"}
+        next={next ?? "/cloud"}
         pageNotReady={error === "page-not-ready"}
       />
     </AuthShell>

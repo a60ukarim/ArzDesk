@@ -79,7 +79,7 @@ export function AppInstall() {
         </p>
       )}
       <Button asChild variant="outline">
-        <Link href="/start">
+        <Link href="/offline">
           Open workspace
           <ArrowRight size={16} />
         </Link>

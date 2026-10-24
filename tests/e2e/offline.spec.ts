@@ -291,3 +291,48 @@ test("device data and shell survive a complete browser restart offline", async (
     await rm(profile, { recursive: true, force: true });
   }
 });
+
+test("normal launch opens device work and local navigation makes no page or API requests", async ({
+  page,
+  request,
+}) => {
+  test.skip(!!process.env.ARZDESK_TEST_DEV, "Production shell");
+  for (const path of ["/", "/start"]) {
+    const response = await request.get(path, { maxRedirects: 0 });
+    expect(response.status()).toBe(307);
+    expect(response.headers().location).toBe("/offline");
+  }
+  await page.goto("/cloud");
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await page.goto("/start");
+  await expect(page).toHaveURL(/\/offline$/);
+  await expect(
+    page.getByText("Ready for offline use", { exact: false }),
+  ).toBeVisible({ timeout: 60000 });
+  await page
+    .getByLabel("Workspace name", { exact: true })
+    .fill("Always on this device");
+  await page
+    .getByRole("button", { name: "Create workspace", exact: true })
+    .click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const requests: string[] = [];
+  page.on("request", (r) => {
+    if (["document", "fetch", "xhr"].includes(r.resourceType()))
+      requests.push(r.url());
+  });
+  for (const name of ["Clients", "Projects", "Tasks", "Settings", "Overview"]) {
+    await page
+      .getByRole("button", { name: "Open workspace menu", exact: true })
+      .tap();
+    await page
+      .getByRole("navigation", { name: "Mobile workspace navigation" })
+      .getByRole("link", { name, exact: true })
+      .click();
+    await expect(
+      page.getByRole("dialog", { name: "Workspace menu" }),
+    ).not.toBeVisible();
+    await expect(page).toHaveURL(new RegExp("/" + name.toLowerCase() + "$"));
+  }
+  expect(requests).toEqual([]);
+});

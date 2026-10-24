@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.1] — 2026-10-24
+
+Open device workspaces directly from the root address, legacy `/start` launches and the install page. Online accounts remain explicitly available at `/cloud`. Device navigation uses native hash links, avoiding server router requests and RSC prefetching. No storage format change.
+
 ## [0.6.0] — 2026-10-24
 
 Local device workspaces with transactional IndexedDB storage, full client/project/task workflows, JSON backup export and non-destructive import, an authenticated one-way copy from online accounts, and a versioned offline application shell. No automatic synchronization, desktop installer or mobile binary. Compact safe-area toast with its close control aligned at the edge. See [offline guide](docs/offline.ar.md).
