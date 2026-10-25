@@ -15,7 +15,9 @@ test("public product page explains offline limitations and works on mobile", asy
     page.getByRole("link", { name: "Install ArzDesk" }),
   ).toHaveAttribute("href", "/install");
 
-  const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+  const robots = await page
+    .locator('meta[name="robots"]')
+    .getAttribute("content");
   expect(robots?.includes("noindex")).toBe(false);
   await expect(
     page.getByText("Device work does not automatically sync", { exact: false }),
