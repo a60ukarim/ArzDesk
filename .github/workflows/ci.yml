@@ -6,6 +6,29 @@ on:
 permissions:
   contents: read
 jobs:
+  format-suggestion:
+    if: github.event_name == 'pull_request' && github.head_ref == 'release/public-launch-prep'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Generate formatting suggestion for this PR
+        run: |
+          npx prettier --write src/app/about/page.tsx tests/e2e/about.spec.ts
+          echo 'ARZDESK_ABOUT_BEGIN'
+          base64 -w0 src/app/about/page.tsx
+          echo
+          echo 'ARZDESK_ABOUT_END'
+          echo 'ARZDESK_TEST_BEGIN'
+          base64 -w0 tests/e2e/about.spec.ts
+          echo
+          echo 'ARZDESK_TEST_END'
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
