@@ -68,9 +68,9 @@ export default function Page() {
         </article>
       </section>
       <footer className="install-footer">
-        <Link href="/sign-in">
+        <Link href="/about">
           <ArrowLeft size={15} />
-          Back to sign in
+          About ArzDesk
         </Link>
         <span>ArzDesk · by ArzCore</span>
       </footer>
