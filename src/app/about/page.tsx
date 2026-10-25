@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import "./about.css";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -48,7 +49,7 @@ const features = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#f7f7f5] text-[#181818]">
+    <main className="about-page min-h-screen bg-[#f7f7f5] text-[#181818]">
       <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
         <Link
           href="/about"
