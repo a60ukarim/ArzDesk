@@ -50,7 +50,11 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#f7f7f5] text-[#181818]">
       <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
-        <Link href="/about" className="flex items-center gap-3" aria-label="ArzDesk home">
+        <Link
+          href="/about"
+          className="flex items-center gap-3"
+          aria-label="ArzDesk home"
+        >
           <Image
             src="/arzdesk-logo-v1.png"
             width={46}
@@ -60,11 +64,18 @@ export default function AboutPage() {
             priority
           />
           <span className="flex flex-col leading-tight">
-            <strong className="text-[20px] font-black tracking-tight">ArzDesk</strong>
-            <span className="text-[11px] font-medium text-neutral-500">by ArzCore Technologies</span>
+            <strong className="text-[20px] font-black tracking-tight">
+              ArzDesk
+            </strong>
+            <span className="text-[11px] font-medium text-neutral-500">
+              by ArzCore Technologies
+            </span>
           </span>
         </Link>
-        <nav aria-label="Main navigation" className="flex flex-wrap items-center gap-2 sm:gap-5">
+        <nav
+          aria-label="Main navigation"
+          className="flex flex-wrap items-center gap-2 sm:gap-5"
+        >
           <a
             className="rounded-lg px-3 py-2 text-xs font-bold hover:bg-neutral-200"
             href="https://github.com/a60ukarim/ArzDesk"
@@ -103,8 +114,9 @@ export default function AboutPage() {
                 Make room for what matters.
               </h1>
               <p className="mt-6 max-w-lg text-[15px] font-medium leading-7 text-neutral-300">
-                Your clients. Your projects. Your next move. ArzDesk puts everyday work in one
-                clear place — including a device mode that works offline after setup.
+                Your clients. Your projects. Your next move. ArzDesk puts
+                everyday work in one clear place — including a device mode that
+                works offline after setup.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
@@ -121,12 +133,15 @@ export default function AboutPage() {
                 </Link>
               </div>
               <p className="mt-5 text-[11px] font-medium text-neutral-400">
-                No sign-up needed for device work. Shared team accounts need internet.
+                No sign-up needed for device work. Shared team accounts need
+                internet.
               </p>
             </div>
             <div className="rounded-[24px] border border-white/25 bg-white/[0.06] p-5 shadow-[0_32px_90px_rgba(0,0,0,.3)] backdrop-blur-sm sm:p-7">
               <div className="flex items-center justify-between border-b border-white/15 pb-5">
-                <strong className="text-sm font-extrabold">A clearer way to work</strong>
+                <strong className="text-sm font-extrabold">
+                  A clearer way to work
+                </strong>
                 <span className="rounded-full border border-white/20 px-3 py-1 text-[10px] text-neutral-300">
                   ONE WORKSPACE
                 </span>
@@ -136,13 +151,23 @@ export default function AboutPage() {
                 ["02", "Projects", "Give every job a place"],
                 ["03", "Tasks", "Know what comes next"],
               ].map(([number, label, subtext]) => (
-                <div key={number} className="flex gap-4 border-b border-white/15 py-5 last:border-0">
-                  <span className="font-mono text-xs text-neutral-400">{number}</span>
+                <div
+                  key={number}
+                  className="flex gap-4 border-b border-white/15 py-5 last:border-0"
+                >
+                  <span className="font-mono text-xs text-neutral-400">
+                    {number}
+                  </span>
                   <div>
                     <strong className="text-lg font-bold">{label}</strong>
-                    <p className="mt-1 text-xs font-medium text-neutral-400">{subtext}</p>
+                    <p className="mt-1 text-xs font-medium text-neutral-400">
+                      {subtext}
+                    </p>
                   </div>
-                  <CheckCircle2 className="ml-auto mt-1 shrink-0 text-neutral-400" size={18} />
+                  <CheckCircle2
+                    className="ml-auto mt-1 shrink-0 text-neutral-400"
+                    size={18}
+                  />
                 </div>
               ))}
             </div>
@@ -150,23 +175,36 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 sm:py-20" aria-labelledby="features-title">
+      <section
+        className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 sm:py-20"
+        aria-labelledby="features-title"
+      >
         <div className="mb-8 max-w-xl">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-neutral-500">
             Made for the everyday
           </p>
-          <h2 id="features-title" className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          <h2
+            id="features-title"
+            className="mt-3 text-3xl font-black tracking-tight sm:text-4xl"
+          >
             Everything has its place.
           </h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {features.map(({ icon: Icon, title, description }) => (
-            <article key={title} className="rounded-[22px] border border-neutral-200 bg-white p-7">
+            <article
+              key={title}
+              className="rounded-[22px] border border-neutral-200 bg-white p-7"
+            >
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100">
                 <Icon size={21} aria-hidden="true" />
               </span>
-              <h3 className="mt-6 text-xl font-extrabold tracking-tight">{title}</h3>
-              <p className="mt-3 text-sm font-medium leading-7 text-neutral-600">{description}</p>
+              <h3 className="mt-6 text-xl font-extrabold tracking-tight">
+                {title}
+              </h3>
+              <p className="mt-3 text-sm font-medium leading-7 text-neutral-600">
+                {description}
+              </p>
             </article>
           ))}
         </div>
@@ -178,21 +216,40 @@ export default function AboutPage() {
             <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-neutral-500">
               Three simple steps
             </p>
-            <h2 id="getting-started-title" className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+            <h2
+              id="getting-started-title"
+              className="mt-3 text-3xl font-black tracking-tight sm:text-4xl"
+            >
               Get started in minutes.
             </h2>
           </div>
           <ol className="space-y-6">
             {[
-              ["Open ArzDesk", "Choose Start free to open device mode. No account is needed."],
-              ["Wait for offline readiness", "Connect once and look for “Ready for offline use” before going offline."],
-              ["Make a backup", "Add your work and export a JSON backup to another safe location regularly."],
+              [
+                "Open ArzDesk",
+                "Choose Start free to open device mode. No account is needed.",
+              ],
+              [
+                "Wait for offline readiness",
+                "Connect once and look for “Ready for offline use” before going offline.",
+              ],
+              [
+                "Make a backup",
+                "Add your work and export a JSON backup to another safe location regularly.",
+              ],
             ].map(([heading, description], index) => (
-              <li key={heading} className="flex gap-5 border-b border-neutral-200 pb-6 last:border-0">
-                <span className="text-sm font-black text-neutral-400">0{index + 1}</span>
+              <li
+                key={heading}
+                className="flex gap-5 border-b border-neutral-200 pb-6 last:border-0"
+              >
+                <span className="text-sm font-black text-neutral-400">
+                  0{index + 1}
+                </span>
                 <div>
                   <h3 className="text-base font-extrabold">{heading}</h3>
-                  <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">{description}</p>
+                  <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
+                    {description}
+                  </p>
                 </div>
               </li>
             ))}
@@ -200,27 +257,38 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8" aria-labelledby="good-to-know-title">
-        <h2 id="good-to-know-title" className="text-2xl font-black tracking-tight">
+      <section
+        className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8"
+        aria-labelledby="good-to-know-title"
+      >
+        <h2
+          id="good-to-know-title"
+          className="text-2xl font-black tracking-tight"
+        >
           Good to know before you start
         </h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-neutral-300 p-6">
             <HardDrive aria-hidden="true" size={20} />
-            <h3 className="mt-3 text-base font-extrabold">Device data stays on your device</h3>
+            <h3 className="mt-3 text-base font-extrabold">
+              Device data stays on your device
+            </h3>
             <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
-              Offline work is stored in this browser. Clearing its data or losing the device
-              can erase your work. Export backups. Device work does not automatically sync
-              with online accounts or other devices.
+              Offline work is stored in this browser. Clearing its data or
+              losing the device can erase your work. Export backups. Device work
+              does not automatically sync with online accounts or other devices.
             </p>
           </div>
           <div className="rounded-2xl border border-neutral-300 p-6">
             <LockKeyhole aria-hidden="true" size={20} />
-            <h3 className="mt-3 text-base font-extrabold">An installable web app, not an EXE</h3>
+            <h3 className="mt-3 text-base font-extrabold">
+              An installable web app, not an EXE
+            </h3>
             <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
-              Install with Chrome, Edge or Safari on supported devices. Online workspaces,
-              sign-in and team sharing require a connection. Local device mode does not
-              password-protect its records from others using the same browser profile.
+              Install with Chrome, Edge or Safari on supported devices. Online
+              workspaces, sign-in and team sharing require a connection. Local
+              device mode does not password-protect its records from others
+              using the same browser profile.
             </p>
           </div>
         </div>
@@ -244,7 +312,9 @@ export default function AboutPage() {
 
       <footer className="border-t border-neutral-200 bg-white px-5 py-7 sm:px-8">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3">
-          <span className="text-xs font-bold">ArzDesk · Built by ArzCore Technologies</span>
+          <span className="text-xs font-bold">
+            ArzDesk · Built by ArzCore Technologies
+          </span>
           <span className="text-xs font-medium text-neutral-500">
             Open-source software · MIT License
           </span>
