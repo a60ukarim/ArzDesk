@@ -7,7 +7,15 @@ const HOME = "arzdesk://local/offline";
 const WEB = "https://arzdesk-sage.vercel.app";
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true } },
+  {
+    scheme: SCHEME,
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      stream: true,
+    },
+  },
 ]);
 app.setName("ArzDesk");
 if (process.platform === "win32") app.setAppUserModelId("com.arzcore.arzdesk");
@@ -89,7 +97,12 @@ async function boot() {
   });
   window.webContents.on("will-navigate", (event, target) => {
     const url = new URL(target);
-    if (url.protocol === "arzdesk:" && url.hostname === "local" && url.pathname === "/offline") return;
+    if (
+      url.protocol === "arzdesk:" &&
+      url.hostname === "local" &&
+      url.pathname === "/offline"
+    )
+      return;
     event.preventDefault();
     if (url.protocol === "arzdesk:" && url.hostname === "local") {
       void external(WEB + url.pathname + url.search);
@@ -107,9 +120,11 @@ async function boot() {
           'Boolean(document.querySelector(".local-home") && document.querySelector("input") && window.indexedDB)',
           true,
         );
-        if (!ok) await new Promise(resolve => setTimeout(resolve, 300));
+        if (!ok) await new Promise((resolve) => setTimeout(resolve, 300));
       }
-      console.log(ok ? "ARZDESK_DESKTOP_SMOKE_OK" : "ARZDESK_DESKTOP_SMOKE_FAILED");
+      console.log(
+        ok ? "ARZDESK_DESKTOP_SMOKE_OK" : "ARZDESK_DESKTOP_SMOKE_FAILED",
+      );
       app.exit(ok ? 0 : 1);
     } catch (error) {
       console.error(error);
@@ -119,14 +134,16 @@ async function boot() {
 }
 
 app.whenReady().then(async () => {
-  protocol.handle(SCHEME, async request => {
+  protocol.handle(SCHEME, async (request) => {
     const file = asset(request);
     if (!file) return new Response("Forbidden", { status: 403 });
     try {
       const data = await fs.readFile(file);
       return new Response(new Uint8Array(data), {
         headers: {
-          "content-type": types[path.extname(file).toLowerCase()] || "application/octet-stream",
+          "content-type":
+            types[path.extname(file).toLowerCase()] ||
+            "application/octet-stream",
           "x-content-type-options": "nosniff",
         },
       });
