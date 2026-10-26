@@ -213,7 +213,10 @@ export function WorkspaceShell({
             {local ? (
               <span className="local-device-badge">On this device</span>
             ) : (
-              <><NotificationBell /><AccountMenu person={person} /></>
+              <>
+                <NotificationBell />
+                <AccountMenu person={person} />
+              </>
             )}
           </div>
         </header>
