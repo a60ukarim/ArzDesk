@@ -41,10 +41,14 @@ describe("device workspaces", () => {
   });
   it("deletes only the selected offline workspace, even when names are identical", () => {
     const original = fixture();
-    const second = act(original.state, "organization.create", "", { name: "Studio" });
+    const second = act(original.state, "organization.create", "", {
+      name: "Studio",
+    });
     const other = act(second.state, "client.save", second.id, { name: "Keep" });
     expect(() =>
-      act(other.state, "organization.delete", original.org, { confirmation: "Wrong" }),
+      act(other.state, "organization.delete", original.org, {
+        confirmation: "Wrong",
+      }),
     ).toThrow("exact workspace name");
     const deleted = act(other.state, "organization.delete", original.org, {
       confirmation: "Studio",
@@ -54,9 +58,11 @@ describe("device workspaces", () => {
     expect(deleted.projects).toHaveLength(0);
     expect(deleted.tasks).toHaveLength(0);
     expect(original.state.organizations).toHaveLength(1);
-    expect(() => act(deleted, "organization.delete", original.org, {
-      confirmation: "Studio",
-    })).toThrow("not found");
+    expect(() =>
+      act(deleted, "organization.delete", original.org, {
+        confirmation: "Studio",
+      }),
+    ).toThrow("not found");
   });
   it("enforces workspace boundaries, parent links and deletion rules", () => {
     const f = fixture();
