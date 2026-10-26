@@ -455,9 +455,7 @@ test("a team can register, organize real work, invite a viewer and revoke access
     // Desktop keeps the document fixed, but lets its ONE content pane scroll.
     // Avoid crushing the overview cards just to fit a short laptop screen.
     expect(dimensions.pageHeight).toBeLessThanOrEqual(height);
-    expect(dimensions.paneScroll).toBeGreaterThanOrEqual(
-      dimensions.paneHeight,
-    );
+    expect(dimensions.paneScroll).toBeGreaterThanOrEqual(dimensions.paneHeight);
     expect(dimensions.sidebarScroll).toBeLessThanOrEqual(
       dimensions.sidebarHeight + 1,
     );
