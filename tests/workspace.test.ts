@@ -353,6 +353,58 @@ describe("invitation lifecycle", () => {
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });
+describe("workspace deletion and invitation inbox", () => {
+  it("allows only the owner to delete a workspace after exact confirmation", async () => {
+    const records = await work();
+    await work(orgB, "other");
+    await service.invite("owner", orgA, { email: "invitee@example.com", role: "member" });
+    await expect(
+      service.deleteOrganization("admin", orgA, "ArzCore"),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(
+      service.deleteOrganization("owner", orgA, "Wrong"),
+    ).rejects.toThrow("exact workspace name");
+    expect((await service.snapshot("owner", orgA)).tasks[0].id).toBe(records.task.id);
+    await service.deleteOrganization("owner", orgA, "ArzCore");
+    expect(await service.listOrganizations("owner")).toHaveLength(0);
+    expect((await service.snapshot("other", orgB)).clients).toHaveLength(1);
+    await expect(service.snapshot("owner", orgA)).rejects.toMatchObject({
+      code: "FORBIDDEN",
+    });
+  });
+
+  it("shows invitations only to the matching signed-in email", async () => {
+    await service.invite("owner", orgA, { email: "INVITEE@example.com", role: "viewer" });
+    expect(await service.listPendingInvitations("other")).toHaveLength(0);
+    const pending = await service.listPendingInvitations("invitee");
+    expect(pending).toHaveLength(1);
+    expect(pending[0].organizationName).toBe("ArzCore");
+    expect(pending[0].role).toBe("viewer");
+    await expect(
+      service.respondToInvitation("other", pending[0].id, "accept"),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    const joined = await service.respondToInvitation("invitee", pending[0].id, "accept");
+    expect(joined).toBe(orgA);
+    expect((await service.snapshot("invitee", orgA)).membership.role).toBe("viewer");
+    expect(await service.listPendingInvitations("invitee")).toHaveLength(0);
+    await expect(
+      service.respondToInvitation("invitee", pending[0].id, "accept"),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("allows invitee to decline and hides revoked or expired invitations", async () => {
+    await service.invite("owner", orgA, { email: "invitee@example.com", role: "member" });
+    const [pending] = await service.listPendingInvitations("invitee");
+    await service.respondToInvitation("invitee", pending.id, "decline");
+    expect(await service.listPendingInvitations("invitee")).toHaveLength(0);
+    await expect(service.snapshot("invitee", orgA)).rejects.toMatchObject({
+      code: "FORBIDDEN",
+    });
+    await service.invite("owner", orgA, { email: "invitee@example.com", role: "member" });
+    await database.db.update(invitations).set({ expiresAt: new Date(Date.now() - 1000) });
+    expect(await service.listPendingInvitations("invitee")).toHaveLength(0);
+  });
+});
 describe("input validation", () => {
   it("rejects blank names, bad email addresses, invalid calendar dates and statuses", async () => {
     await expect(
