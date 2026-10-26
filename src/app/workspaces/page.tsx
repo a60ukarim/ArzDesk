@@ -8,6 +8,7 @@ import { NotificationBell } from "@/components/notification-bell";
 import { requireUser } from "@/lib/session";
 import { workspace } from "@/features/workspace";
 import { OrganizationForm } from "@/features/workspace/organization-form";
+import { WorkspaceRenameControl } from "@/features/workspace/workspace-rename-control";
 export default async function Page() {
   const user = await requireUser();
   const orgs = await workspace.listOrganizations(user.id);
@@ -30,26 +31,27 @@ export default async function Page() {
           </div>
           <div className="org-grid">
             {orgs.map((org) => (
-              <Link
-                className="org-card"
-                key={org.id}
-                href={`/w/${org.id}/overview`}
-              >
-                <span className="workspace-monogram">
-                  {org.name.slice(0, 1).toUpperCase()}
-                </span>
-                <div>
-                  <span className="role-caption">
-                    {org.role.charAt(0).toUpperCase() + org.role.slice(1)}
+              <div className="workspace-card-wrap" key={org.id}>
+                <Link className="org-card" href={`/w/${org.id}/overview`}>
+                  <span className="workspace-monogram">
+                    {org.name.slice(0, 1).toUpperCase()}
                   </span>
-                  <h2>{org.name}</h2>
-                  <p>
-                    Open workspace
-                    <ArrowRight size={14} />
-                  </p>
-                </div>
-                <ArrowRight className="org-open-icon" size={20} />
-              </Link>
+                  <div>
+                    <span className="role-caption">
+                      {org.role.charAt(0).toUpperCase() + org.role.slice(1)}
+                    </span>
+                    <h2>{org.name}</h2>
+                    <p>
+                      Open workspace
+                      <ArrowRight size={14} />
+                    </p>
+                  </div>
+                  <ArrowRight className="org-open-icon" size={20} />
+                </Link>
+                {org.role === "owner" && (
+                  <WorkspaceRenameControl orgId={org.id} name={org.name} />
+                )}
+              </div>
             ))}
           </div>
           <details className="create-workspace-details">
