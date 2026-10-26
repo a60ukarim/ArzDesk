@@ -69,7 +69,9 @@ export default function DownloadPage() {
               <span>Windows 10 &amp; 11 · 64-bit</span>
             </div>
             <h2>Windows</h2>
-            <p>A dedicated desktop application with local, offline workspaces.</p>
+            <p>
+              A dedicated desktop application with local, offline workspaces.
+            </p>
             {windows ? (
               <a className="download-platform-primary" href={windows}>
                 <Download size={18} aria-hidden="true" />
@@ -89,7 +91,9 @@ export default function DownloadPage() {
               <span>macOS · Apple Silicon / Intel</span>
             </div>
             <h2>MacBook &amp; Mac</h2>
-            <p>A desktop version for both modern Apple Silicon and Intel Macs.</p>
+            <p>
+              A desktop version for both modern Apple Silicon and Intel Macs.
+            </p>
             {macArm || macIntel ? (
               <div className="download-platform-options">
                 {macArm && (
@@ -119,8 +123,14 @@ export default function DownloadPage() {
               <span>Android · Phones &amp; tablets</span>
             </div>
             <h2>Android</h2>
-            <p>Install the web app on your home screen now. Native APK support is planned.</p>
-            <Link className="download-platform-primary" href="/install#installation-steps">
+            <p>
+              Install the web app on your home screen now. Native APK support is
+              planned.
+            </p>
+            <Link
+              className="download-platform-primary"
+              href="/install#installation-steps"
+            >
               <Download size={17} aria-hidden="true" />
               Install on Android (PWA)
             </Link>
@@ -138,8 +148,14 @@ export default function DownloadPage() {
               <span>iOS · iPhone &amp; iPad</span>
             </div>
             <h2>iPhone &amp; iPad</h2>
-            <p>Use Safari’s Add to Home Screen option. A native App Store release is not available yet.</p>
-            <Link className="download-platform-primary" href="/install#installation-steps">
+            <p>
+              Use Safari’s Add to Home Screen option. A native App Store release
+              is not available yet.
+            </p>
+            <Link
+              className="download-platform-primary"
+              href="/install#installation-steps"
+            >
               <Download size={17} aria-hidden="true" />
               Install on iPhone (PWA)
             </Link>
@@ -150,24 +166,33 @@ export default function DownloadPage() {
           <div>
             <WifiOff size={22} aria-hidden="true" />
             <h2>Works offline</h2>
-            <p>Desktop bundles will include local app files. Phone PWAs need one online visit to prepare offline access.</p>
+            <p>
+              Desktop bundles will include local app files. Phone PWAs need one
+              online visit to prepare offline access.
+            </p>
           </div>
           <div>
             <HardDrive size={22} aria-hidden="true" />
             <h2>Stored on each device</h2>
-            <p>Phone, browser and desktop workspaces are separate. Export and import a backup to move local work.</p>
+            <p>
+              Phone, browser and desktop workspaces are separate. Export and
+              import a backup to move local work.
+            </p>
           </div>
           <div>
             <ShieldCheck size={22} aria-hidden="true" />
             <h2>Direct downloads</h2>
-            <p>When installer builds are verified, they will be hosted directly, without sending users to a personal GitHub page.</p>
+            <p>
+              When installer builds are verified, they will be hosted directly,
+              without sending users to a personal GitHub page.
+            </p>
           </div>
         </section>
 
         <p className="download-note">
           Windows and macOS installers are undergoing testing. On iPhone and
-          Android, the installable PWA is available now. Desktop installers
-          may require publisher signing before wide distribution.
+          Android, the installable PWA is available now. Desktop installers may
+          require publisher signing before wide distribution.
         </p>
         <footer>ArzDesk — Built by ArzCore Technologies</footer>
       </div>
