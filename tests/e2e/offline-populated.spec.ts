@@ -9,7 +9,9 @@ test("three local workspaces share one responsive grid and do not crowd desktop"
   ).toBeVisible({ timeout: 60000 });
 
   for (let index = 0; index < 3; index++) {
-    if (index > 0) await page.locator(".local-add-workspace summary").click();
+    if (index > 0) {
+      await page.locator(".local-add-workspace summary").click();
+    }
     await page
       .getByLabel("Workspace name", { exact: true })
       .fill("ArzCore Technologies");
