@@ -1,0 +1,59 @@
+name: macOS installer
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "desktop/**"
+      - "scripts/prepare-desktop.mjs"
+      - "src/lib/auth-client.ts"
+      - "src/features/offline/**"
+      - "src/components/app-registration.tsx"
+      - ".github/workflows/macos.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-mac:
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build web interface
+        run: npm run build
+      - name: Package offline interface
+        run: node scripts/prepare-desktop.mjs
+      - name: Install Electron
+        run: npm install --prefix desktop --no-audit --no-fund
+      - name: Build unsigned macOS installers
+        run: npm run dist:mac --prefix desktop
+      - name: Verify both macOS architectures
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls -lah dist-windows/
+          for arch in x64 arm64; do
+            files=(dist-windows/ArzDesk-*-mac-${arch}.dmg)
+            if [[ ! -f "${files[0]}" ]]; then
+              echo "Missing macOS ${arch} installer"; exit 1
+            fi
+            shasum -a 256 "${files[0]}"
+          done
+      - name: Save macOS test builds (not a public release)
+        uses: actions/upload-artifact@v6
+        with:
+          name: ArzDesk-macOS-Test-Builds
+          path: dist-windows/ArzDesk-*-mac-*.dmg
+          if-no-files-found: error
+          retention-days: 30
