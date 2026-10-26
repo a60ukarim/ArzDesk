@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { WorkspaceShell } from "../workspace/workspace-shell";
 import { WorkspaceUI, type Section } from "../workspace/workspace-ui";
 import { WorkspaceRuntime } from "../workspace/runtime";
+import { WorkspaceRenameControl } from "../workspace/workspace-rename-control";
 import {
   applyLocalAction,
   importLocalBackup,
@@ -462,18 +463,46 @@ export function OfflineApp() {
             </div>
             <div className="org-grid">
               {state.organizations.map((o) => (
-                <a className="org-card" key={o.id} href={`#${o.id}/overview`}>
-                  <span className="workspace-monogram" aria-hidden="true">
-                    {o.name[0]}
-                  </span>
-                  <div className="local-org-card-content">
-                    <span className="role-caption">Local workspace</span>
-                    <h3>{o.name}</h3>
-                    <p>
-                      Open workspace <ArrowRight size={14} aria-hidden="true" />
-                    </p>
-                  </div>
-                </a>
+                <div className="workspace-card-wrap" key={o.id}>
+                  <a className="org-card" href={`#${o.id}/overview`}>
+                    <span className="workspace-monogram" aria-hidden="true">
+                      {o.name[0]}
+                    </span>
+                    <div className="local-org-card-content">
+                      <span className="role-caption">Local workspace</span>
+                      <h3>{o.name}</h3>
+                      <p>
+                        Open workspace <ArrowRight size={14} aria-hidden="true" />
+                      </p>
+                    </div>
+                  </a>
+                  <WorkspaceRenameControl
+                    orgId={o.id}
+                    name={o.name}
+                    onRename={async (nextName) => {
+                      try {
+                        const updated = await deviceTransaction((current) =>
+                          applyLocalAction(
+                            current,
+                            "organization.rename",
+                            o.id,
+                            { name: nextName },
+                          ).state,
+                        );
+                        saved(updated);
+                        return { ok: true };
+                      } catch (error) {
+                        return {
+                          ok: false,
+                          error:
+                            error instanceof Error
+                              ? error.message
+                              : "Could not rename the workspace.",
+                        };
+                      }
+                    }}
+                  />
+                </div>
               ))}
             </div>
           </section>
