@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/offline",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
+        source: "/offline-assets.js",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
         source: "/sw.js",
         headers: [
           {
