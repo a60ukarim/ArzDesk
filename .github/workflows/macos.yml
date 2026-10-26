@@ -40,8 +40,7 @@ jobs:
       - run: node scripts/prepare-desktop.mjs
       - run: npm ci --prefix desktop --no-audit --no-fund
       - run: node desktop/node_modules/electron/install.js
-      - run: npm exec -- electron-builder --mac dmg --${{ matrix.arch }}
-        working-directory: desktop
+      - run: npm exec --prefix desktop electron-builder -- --mac dmg --${{ matrix.arch }}
       - name: Mount DMG and test packaged app on its native architecture
         shell: bash
         run: |
@@ -55,7 +54,7 @@ jobs:
           installed="$RUNNER_TEMP/arzdesk-installed"
           mkdir -p "$installed"
           ditto "$mount/ArzDesk.app" "$installed/ArzDesk.app"
-          lipo -verify_arch ${{ matrix.arch == 'x64' && 'x86_64' || 'arm64' }} "$installed/ArzDesk.app/Contents/MacOS/ArzDesk"
+          lipo "$installed/ArzDesk.app/Contents/MacOS/ArzDesk" -verify_arch ${{ matrix.arch == 'x64' && 'x86_64' || 'arm64' }}
           export ARZDESK_SMOKE_PROFILE="$RUNNER_TEMP/arzdesk-qa-installed-${{ matrix.arch }}"
           for phase in write read; do
             export ARZDESK_SMOKE_PHASE="$phase"
