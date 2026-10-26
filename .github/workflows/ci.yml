@@ -20,7 +20,8 @@ jobs:
       - run: npm ci
       - name: Format and show review files
         run: |
-          npx prettier --write src/app/workspace-refine.css tests/e2e/workspace-responsive.spec.ts
+          npx prettier --write src/app/workspace-refine.css tests/e2e/workspace-responsive.spec.ts tests/e2e/workspace.spec.ts
+          git diff -- tests/e2e/workspace.spec.ts
           echo 'ARZDESK_REVIEW_CSS_BEGIN'
           base64 -w0 src/app/workspace-refine.css
           echo
