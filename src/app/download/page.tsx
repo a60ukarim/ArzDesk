@@ -1,3 +1,4 @@
+import "./download.css";
 import Link from "next/link";
 import { ArrowLeft, Download, HardDrive, MonitorDown, ShieldCheck, WifiOff } from "lucide-react";
 import { Brand } from "@/components/brand";
