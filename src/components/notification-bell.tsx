@@ -72,7 +72,10 @@ export function NotificationBell() {
     };
   }, [open]);
 
-  async function respond(invitation: IncomingInvitation, decision: "accept" | "decline") {
+  async function respond(
+    invitation: IncomingInvitation,
+    decision: "accept" | "decline",
+  ) {
     setBusyId(invitation.id);
     setError("");
     try {
@@ -119,42 +122,65 @@ export function NotificationBell() {
           <header className="notification-heading">
             <div>
               <h2>Notifications</h2>
-              <p>{invitations.length} pending {invitations.length === 1 ? "invitation" : "invitations"}</p>
+              <p>
+                {invitations.length} pending{" "}
+                {invitations.length === 1 ? "invitation" : "invitations"}
+              </p>
             </div>
-            <button className="notification-close" aria-label="Close notifications" type="button" onClick={() => setOpen(false)}>
+            <button
+              className="notification-close"
+              aria-label="Close notifications"
+              type="button"
+              onClick={() => setOpen(false)}
+            >
               <X size={18} />
             </button>
           </header>
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
           {invitations.length === 0 ? (
-            <p className="notification-empty">You’re all caught up. New team invitations will show up here.</p>
+            <p className="notification-empty">
+              You’re all caught up. New team invitations will show up here.
+            </p>
           ) : (
             <div className="notification-list">
               {invitations.map((invite) => (
                 <article className="notification-entry" key={invite.id}>
                   <strong dir="auto">{invite.organizationName}</strong>
                   <p>You're invited to join as {invite.role}.</p>
-                  <small>Expires {new Date(invite.expiresAt).toLocaleDateString()}</small>
+                  <small>
+                    Expires {new Date(invite.expiresAt).toLocaleDateString()}
+                  </small>
                   <div className="notification-actions">
                     <Button
                       size="sm"
                       type="button"
                       disabled={!!busyId}
                       onClick={() => void respond(invite, "accept")}
-                    ><Check size={14} /> Accept</Button>
+                    >
+                      <Check size={14} /> Accept
+                    </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       type="button"
                       disabled={!!busyId}
                       onClick={() => void respond(invite, "decline")}
-                    >Decline</Button>
+                    >
+                      Decline
+                    </Button>
                   </div>
                 </article>
               ))}
             </div>
           )}
-          <p className="notification-footnote">Only invitations for your signed-in email appear here. The page checks for new invitations while you're online.</p>
+          <p className="notification-footnote">
+            Only invitations for your signed-in email appear here. The page
+            checks for new invitations while you're online.
+          </p>
         </section>
       )}
     </div>
