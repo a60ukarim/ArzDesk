@@ -177,7 +177,11 @@ export function createWorkspaceService(db: Database) {
         return row;
       });
     },
-    async deleteOrganization(userId: string, orgId: string, confirmation: string) {
+    async deleteOrganization(
+      userId: string,
+      orgId: string,
+      confirmation: string,
+    ) {
       return write(userId, orgId, "manage-workspace", async (tx) => {
         const [org] = await tx
           .select({ id: organizations.id, name: organizations.name })
@@ -185,13 +189,17 @@ export function createWorkspaceService(db: Database) {
           .where(eq(organizations.id, orgId));
         if (!org) throw new WorkspaceError("Workspace not found.", "NOT_FOUND");
         if (confirmation !== org.name)
-          throw new WorkspaceError("Enter the exact workspace name to confirm deletion.");
+          throw new WorkspaceError(
+            "Enter the exact workspace name to confirm deletion.",
+          );
         // Delete dependents in dependency order, including project->client RESTRICT.
         // The transaction guarantees all-or-nothing removal.
         await tx.delete(tasks).where(eq(tasks.organizationId, orgId));
         await tx.delete(projects).where(eq(projects.organizationId, orgId));
         await tx.delete(clients).where(eq(clients.organizationId, orgId));
-        await tx.delete(invitations).where(eq(invitations.organizationId, orgId));
+        await tx
+          .delete(invitations)
+          .where(eq(invitations.organizationId, orgId));
         await tx.delete(members).where(eq(members.organizationId, orgId));
         await tx.delete(organizations).where(eq(organizations.id, orgId));
       });
@@ -207,7 +215,10 @@ export function createWorkspaceService(db: Database) {
           createdAt: invitations.createdAt,
         })
         .from(invitations)
-        .innerJoin(organizations, eq(organizations.id, invitations.organizationId))
+        .innerJoin(
+          organizations,
+          eq(organizations.id, invitations.organizationId),
+        )
         .innerJoin(user, eq(sql`lower(${user.email})`, invitations.email))
         .where(
           and(
@@ -220,7 +231,11 @@ export function createWorkspaceService(db: Database) {
         .orderBy(desc(invitations.createdAt))
         .limit(40);
     },
-    async respondToInvitation(userId: string, inviteId: string, decision: "accept" | "decline") {
+    async respondToInvitation(
+      userId: string,
+      inviteId: string,
+      decision: "accept" | "decline",
+    ) {
       if (!/^[a-f0-9-]{36}$/.test(inviteId))
         throw new WorkspaceError("Invalid invitation.");
       return db.transaction(async (tx) => {
@@ -228,36 +243,55 @@ export function createWorkspaceService(db: Database) {
           .select({ orgId: invitations.organizationId })
           .from(invitations)
           .where(eq(invitations.id, inviteId));
-        if (!lookup) throw new WorkspaceError("Invitation not found.", "NOT_FOUND");
-        await tx.select({ id: organizations.id })
+        if (!lookup)
+          throw new WorkspaceError("Invitation not found.", "NOT_FOUND");
+        await tx
+          .select({ id: organizations.id })
           .from(organizations)
           .where(eq(organizations.id, lookup.orgId))
           .for("update");
         const [invite] = await tx
           .select()
           .from(invitations)
-          .where(and(
-            eq(invitations.id, inviteId),
-            isNull(invitations.acceptedAt),
-            isNull(invitations.revokedAt),
-            gt(invitations.expiresAt, new Date()),
-          ))
+          .where(
+            and(
+              eq(invitations.id, inviteId),
+              isNull(invitations.acceptedAt),
+              isNull(invitations.revokedAt),
+              gt(invitations.expiresAt, new Date()),
+            ),
+          )
           .for("update");
-        const [person] = await tx.select({ email: user.email })
-          .from(user).where(eq(user.id, userId));
-        if (!invite || !person ||
-          person.email.toLowerCase() !== invite.email.toLowerCase())
-          throw new WorkspaceError("Invitation not available for this account.", "FORBIDDEN");
+        const [person] = await tx
+          .select({ email: user.email })
+          .from(user)
+          .where(eq(user.id, userId));
+        if (
+          !invite ||
+          !person ||
+          person.email.toLowerCase() !== invite.email.toLowerCase()
+        )
+          throw new WorkspaceError(
+            "Invitation not available for this account.",
+            "FORBIDDEN",
+          );
         if (decision === "accept") {
-          await tx.insert(members).values({
-            organizationId: invite.organizationId,
-            userId,
-            role: invite.role,
-          }).onConflictDoNothing();
-          await tx.update(invitations).set({ acceptedAt: new Date() })
+          await tx
+            .insert(members)
+            .values({
+              organizationId: invite.organizationId,
+              userId,
+              role: invite.role,
+            })
+            .onConflictDoNothing();
+          await tx
+            .update(invitations)
+            .set({ acceptedAt: new Date() })
             .where(eq(invitations.id, inviteId));
         } else {
-          await tx.update(invitations).set({ revokedAt: new Date() })
+          await tx
+            .update(invitations)
+            .set({ revokedAt: new Date() })
             .where(eq(invitations.id, inviteId));
         }
         return invite.organizationId;
