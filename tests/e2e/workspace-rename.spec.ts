@@ -49,7 +49,9 @@ test("quick rename changes only one offline workspace and keeps its ID", async (
     page.locator(".local-workspaces .org-card").nth(1),
   ).toContainText("Studio");
   await page.goto(`/offline${first}`);
-  await expect(page.locator("#workspace-switcher")).toContainText("Studio Alpha");
+  await expect(page.locator("#workspace-switcher")).toContainText(
+    "Studio Alpha",
+  );
 });
 
 test("owner can quickly rename online workspace without changing its URL", async ({
