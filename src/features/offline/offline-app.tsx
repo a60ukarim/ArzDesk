@@ -135,7 +135,10 @@ export function OfflineApp() {
   const org = state?.organizations.find((o) => o.id === orgId);
   const params = new URLSearchParams(query);
   const backupPanel = (
-    <section className="panel settings-card local-backup" aria-labelledby="local-backup-title">
+    <section
+      className="panel settings-card local-backup"
+      aria-labelledby="local-backup-title"
+    >
       <div className="local-backup-intro">
         <span className="entity-icon" aria-hidden="true">
           <HardDrive size={20} />
@@ -144,8 +147,8 @@ export function OfflineApp() {
           <span className="local-section-eyebrow">DATA & BACKUPS</span>
           <h2 id="local-backup-title">Your device, your data</h2>
           <p>
-            Your work stays in this browser. No sign-in needed, but anyone
-            using the same browser profile can access it.
+            Your work stays in this browser. No sign-in needed, but anyone using
+            the same browser profile can access it.
           </p>
         </div>
       </div>
@@ -155,122 +158,122 @@ export function OfflineApp() {
           erase local work.
         </p>
         <div className="local-actions">
-        <Button
-          disabled={busy || !state?.organizations.length}
-          onClick={() =>
-            void run(async () => {
-              const latest = await deviceTransaction();
-              const url = URL.createObjectURL(
-                new Blob([JSON.stringify(latest, null, 2)], {
-                  type: "application/json",
-                }),
-              );
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `ArzDesk-backup-${new Date().toISOString().slice(0, 10)}.json`;
-              a.click();
-              setTimeout(() => URL.revokeObjectURL(url), 10000);
-              setNotice(
-                "Backup downloaded. Keep it somewhere safe; it contains your workspace data.",
-              );
-            })
-          }
-        >
-          <Download size={16} />
-          Export backup
-        </Button>
-        <label className={`btn btn-outline ${busy ? "local-disabled" : ""}`}>
-          <Upload size={16} />
-          Import backup
-          <input
-            className="sr-only"
-            type="file"
-            accept="application/json,.json"
-            disabled={busy}
-            aria-label="Import backup"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = "";
-              if (!file) return;
+          <Button
+            disabled={busy || !state?.organizations.length}
+            onClick={() =>
               void run(async () => {
-                if (file.size > 20 * 1024 * 1024)
-                  throw new Error(
-                    "Choose an ArzDesk backup smaller than 20 MB.",
-                  );
-                let incoming: unknown;
-                try {
-                  incoming = JSON.parse(await file.text());
-                  localStateSchema.parse(incoming);
-                } catch {
-                  throw new Error(
-                    "This file is not a supported ArzDesk backup. Your existing work was kept.",
-                  );
-                }
-                const next = await deviceTransaction((current) =>
-                  importLocalBackup(current, incoming),
+                const latest = await deviceTransaction();
+                const url = URL.createObjectURL(
+                  new Blob([JSON.stringify(latest, null, 2)], {
+                    type: "application/json",
+                  }),
                 );
-                saved(next);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `ArzDesk-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
                 setNotice(
-                  "Backup imported as additional workspaces. Existing work was kept.",
+                  "Backup downloaded. Keep it somewhere safe; it contains your workspace data.",
                 );
-              });
-            }}
-          />
-        </label>
+              })
+            }
+          >
+            <Download size={16} />
+            Export backup
+          </Button>
+          <label className={`btn btn-outline ${busy ? "local-disabled" : ""}`}>
+            <Upload size={16} />
+            Import backup
+            <input
+              className="sr-only"
+              type="file"
+              accept="application/json,.json"
+              disabled={busy}
+              aria-label="Import backup"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                void run(async () => {
+                  if (file.size > 20 * 1024 * 1024)
+                    throw new Error(
+                      "Choose an ArzDesk backup smaller than 20 MB.",
+                    );
+                  let incoming: unknown;
+                  try {
+                    incoming = JSON.parse(await file.text());
+                    localStateSchema.parse(incoming);
+                  } catch {
+                    throw new Error(
+                      "This file is not a supported ArzDesk backup. Your existing work was kept.",
+                    );
+                  }
+                  const next = await deviceTransaction((current) =>
+                    importLocalBackup(current, incoming),
+                  );
+                  saved(next);
+                  setNotice(
+                    "Backup imported as additional workspaces. Existing work was kept.",
+                  );
+                });
+              }}
+            />
+          </label>
         </div>
         <details className="local-advanced">
           <summary>
             More storage options <ChevronDown size={16} aria-hidden="true" />
           </summary>
           <div className="local-extra-actions">
-        <Button
-          variant="outline"
-          disabled={busy}
-          onClick={() =>
-            void run(async () => {
-              const granted = await navigator.storage?.persist?.();
-              setNotice(
-                granted
-                  ? "Persistent device storage enabled. Keep making backups too."
-                  : "Your browser did not grant persistent storage. Keep exporting backups regularly.",
-              );
-            })
-          }
-        >
-          <ShieldCheck size={16} />
-          Protect device storage
-        </Button>
-        <Button
-          variant="outline"
-          disabled={busy}
-          onClick={() =>
-            void run(async () => {
-              const response = await fetch("/api/offline-export", {
-                cache: "no-store",
-              });
-              if (response.status === 401)
-                throw new Error(
-                  "Sign in to your online account first, then return here to copy its workspaces.",
-                );
-              if (!response.ok)
-                throw new Error(
-                  "Online workspaces could not be copied. Connect to the internet and try again.",
-                );
-              const incoming = await response.json();
-              saved(
-                await deviceTransaction((current) =>
-                  importLocalBackup(current, incoming),
-                ),
-              );
-              setNotice(
-                "Online workspaces copied to this device. Future changes are separate; automatic sync is not enabled.",
-              );
-            })
-          }
-        >
-          <Cloud size={16} />
-          Copy online workspaces
-        </Button>
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                void run(async () => {
+                  const granted = await navigator.storage?.persist?.();
+                  setNotice(
+                    granted
+                      ? "Persistent device storage enabled. Keep making backups too."
+                      : "Your browser did not grant persistent storage. Keep exporting backups regularly.",
+                  );
+                })
+              }
+            >
+              <ShieldCheck size={16} />
+              Protect device storage
+            </Button>
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                void run(async () => {
+                  const response = await fetch("/api/offline-export", {
+                    cache: "no-store",
+                  });
+                  if (response.status === 401)
+                    throw new Error(
+                      "Sign in to your online account first, then return here to copy its workspaces.",
+                    );
+                  if (!response.ok)
+                    throw new Error(
+                      "Online workspaces could not be copied. Connect to the internet and try again.",
+                    );
+                  const incoming = await response.json();
+                  saved(
+                    await deviceTransaction((current) =>
+                      importLocalBackup(current, incoming),
+                    ),
+                  );
+                  setNotice(
+                    "Online workspaces copied to this device. Future changes are separate; automatic sync is not enabled.",
+                  );
+                })
+              }
+            >
+              <Cloud size={16} />
+              Copy online workspaces
+            </Button>
           </div>
         </details>
         <p className="local-backup-footnote">
@@ -291,7 +294,9 @@ export function OfflineApp() {
       </span>
       <span className="local-status-caption">Saved on this device</span>
       {!!state?.organizations.length && (
-        <a href="/offline#">Your workspaces <ArrowRight size={14} aria-hidden="true" /></a>
+        <a href="/offline#">
+          Your workspaces <ArrowRight size={14} aria-hidden="true" />
+        </a>
       )}
     </div>
   );
@@ -405,7 +410,9 @@ export function OfflineApp() {
                   <div>
                     <span className="role-caption">On this device</span>
                     <h2>{o.name}</h2>
-                    <p>Open workspace <ArrowRight size={14} aria-hidden="true" /></p>
+                    <p>
+                      Open workspace <ArrowRight size={14} aria-hidden="true" />
+                    </p>
                   </div>
                 </a>
               ))}
@@ -413,54 +420,56 @@ export function OfflineApp() {
           )}
         </div>
         <form
-        className="panel local-create"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void run(async () => {
-            let id = "";
-            saved(
-              await deviceTransaction((current) => {
-                const result = applyLocalAction(
-                  current,
-                  "organization.create",
-                  "",
-                  { name },
-                );
-                id = result.id;
-                return result.state;
-              }),
-            );
-            setName("");
-            window.location.hash = `${id}/overview`;
-          });
-        }}
-      >
-        <div className="local-form-heading">
-          <span className="local-form-icon" aria-hidden="true"><Plus size={19} /></span>
-          <div>
-            <span className="local-section-eyebrow">GET STARTED</span>
-            <h2>
-              {state.organizations.length
-                ? "Create another workspace"
-                : "Create your first workspace"}
-            </h2>
+          className="panel local-create"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void run(async () => {
+              let id = "";
+              saved(
+                await deviceTransaction((current) => {
+                  const result = applyLocalAction(
+                    current,
+                    "organization.create",
+                    "",
+                    { name },
+                  );
+                  id = result.id;
+                  return result.state;
+                }),
+              );
+              setName("");
+              window.location.hash = `${id}/overview`;
+            });
+          }}
+        >
+          <div className="local-form-heading">
+            <span className="local-form-icon" aria-hidden="true">
+              <Plus size={19} />
+            </span>
+            <div>
+              <span className="local-section-eyebrow">GET STARTED</span>
+              <h2>
+                {state.organizations.length
+                  ? "Create another workspace"
+                  : "Create your first workspace"}
+              </h2>
+            </div>
           </div>
-        </div>
-        <label className="field">
-          Workspace name
-          <input
-            required
-            maxLength={120}
-            placeholder="Your business or project"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
-        <Button disabled={busy} type="submit">
-          <Plus size={16} />
-          Create workspace
-        </Button>
-      </form>
+          <label className="field">
+            Workspace name
+            <input
+              required
+              maxLength={120}
+              placeholder="Your business or project"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
+          <Button disabled={busy} type="submit">
+            <Plus size={16} />
+            Create workspace
+          </Button>
+        </form>
       </div>
       {backupPanel}
     </main>
