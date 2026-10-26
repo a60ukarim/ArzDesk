@@ -9,7 +9,9 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
   ).toBeVisible({ timeout: 60000 });
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByLabel("Workspace name", { exact: true }).fill("Studio workspace");
+  await page
+    .getByLabel("Workspace name", { exact: true })
+    .fill("Studio workspace");
   await page
     .getByRole("button", { name: "Create workspace", exact: true })
     .click();
@@ -19,13 +21,12 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
 
   const id = (await page.evaluate(() => location.hash)).split("/")[0].slice(1);
   const navigate = async (section: string) => {
-    await page.evaluate(
-      (hash) => {
-        location.hash = hash;
-      },
-      `${id}/${section}`,
-    );
-    await expect(page.locator(`.page-content.section-${section}`)).toBeVisible();
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `${id}/${section}`);
+    await expect(
+      page.locator(`.page-content.section-${section}`),
+    ).toBeVisible();
   };
 
   await navigate("clients");
@@ -38,14 +39,18 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
   await navigate("projects");
   await page.getByRole("button", { name: "New project", exact: true }).click();
   const project = page.getByRole("dialog", { name: "New project" });
-  await project.getByLabel("Project name", { exact: true }).fill("Website update");
+  await project
+    .getByLabel("Project name", { exact: true })
+    .fill("Website update");
   await project.getByRole("button", { name: "Create project" }).click();
   await expect(project).not.toBeVisible();
 
   await navigate("tasks");
   await page.getByRole("button", { name: "Add task", exact: true }).click();
   const task = page.getByRole("dialog", { name: "Add task" });
-  await task.getByLabel("Task title", { exact: true }).fill("Update landing page");
+  await task
+    .getByLabel("Task title", { exact: true })
+    .fill("Update landing page");
   await task.getByRole("button", { name: "Add task" }).click();
   await expect(task).not.toBeVisible();
 
@@ -57,7 +62,13 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
     for (const width of [320, 390, 768, 1366, 1440]) {
       await page.setViewportSize({ width, height: 900 });
 
-      for (const section of ["overview", "clients", "projects", "tasks", "settings"]) {
+      for (const section of [
+        "overview",
+        "clients",
+        "projects",
+        "tasks",
+        "settings",
+      ]) {
         await navigate(section);
         const metrics = await page.evaluate(() => {
           const rect = (selector: string) =>
@@ -77,7 +88,10 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
           };
         });
 
-        expect(metrics.overflow, `Page overflow: ${section} / ${width}px / ${theme}`).toBe(false);
+        expect(
+          metrics.overflow,
+          `Page overflow: ${section} / ${width}px / ${theme}`,
+        ).toBe(false);
         expect(metrics.contentLeft).toBeGreaterThanOrEqual(-1);
         expect(metrics.contentRight).toBeLessThanOrEqual(width + 1);
         expect(metrics.headerHeight).toBeLessThan(width <= 600 ? 155 : 100);
@@ -87,18 +101,20 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
         }
 
         if (section === "overview" && width > 1100) {
-          const layout = await page.locator(".dashboard-grid").evaluate((el) => {
-            const children = el.querySelectorAll(":scope > .panel");
-            const left = children[0].getBoundingClientRect();
-            const right = children[1].getBoundingClientRect();
-            return {
-              left: left.left,
-              right: right.left,
-              overflowY: getComputedStyle(
-                children[0].querySelector(".project-summaries")!,
-              ).overflowY,
-            };
-          });
+          const layout = await page
+            .locator(".dashboard-grid")
+            .evaluate((el) => {
+              const children = el.querySelectorAll(":scope > .panel");
+              const left = children[0].getBoundingClientRect();
+              const right = children[1].getBoundingClientRect();
+              return {
+                left: left.left,
+                right: right.left,
+                overflowY: getComputedStyle(
+                  children[0].querySelector(".project-summaries")!,
+                ).overflowY,
+              };
+            });
           expect(layout.left).not.toBe(layout.right);
           expect(layout.overflowY).toBe("visible");
         }
@@ -109,11 +125,13 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
             contentType: "image/png",
           });
           if (process.env.ARZDESK_CAPTURE_WORKSPACE === "1") {
-            const encoded = (await page.screenshot({
-              type: "jpeg",
-              quality: 65,
-              fullPage: true,
-            })).toString("base64");
+            const encoded = (
+              await page.screenshot({
+                type: "jpeg",
+                quality: 65,
+                fullPage: true,
+              })
+            ).toString("base64");
             console.log("ARZDESK_MOBILE_VISUAL_BEGIN");
             for (let i = 0; i < encoded.length; i += 3500) {
               console.log("ARZDESK_MOBILE_PART=" + encoded.slice(i, i + 3500));
@@ -128,11 +146,13 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
             contentType: "image/png",
           });
           if (process.env.ARZDESK_CAPTURE_WORKSPACE === "1") {
-            const encoded = (await page.screenshot({
-              type: "jpeg",
-              quality: 65,
-              fullPage: true,
-            })).toString("base64");
+            const encoded = (
+              await page.screenshot({
+                type: "jpeg",
+                quality: 65,
+                fullPage: true,
+              })
+            ).toString("base64");
             console.log("ARZDESK_LAPTOP_VISUAL_BEGIN");
             for (let i = 0; i < encoded.length; i += 3500) {
               console.log("ARZDESK_LAPTOP_PART=" + encoded.slice(i, i + 3500));
