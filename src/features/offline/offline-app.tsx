@@ -324,57 +324,57 @@ export function OfflineApp() {
       </main>
     );
   const createForm = (
-<form
-  className="panel local-create"
-  onSubmit={(e) => {
-    e.preventDefault();
-    void run(async () => {
-      let id = "";
-      saved(
-        await deviceTransaction((current) => {
-          const result = applyLocalAction(
-            current,
-            "organization.create",
-            "",
-            { name },
+    <form
+      className="panel local-create"
+      onSubmit={(e) => {
+        e.preventDefault();
+        void run(async () => {
+          let id = "";
+          saved(
+            await deviceTransaction((current) => {
+              const result = applyLocalAction(
+                current,
+                "organization.create",
+                "",
+                { name },
+              );
+              id = result.id;
+              return result.state;
+            }),
           );
-          id = result.id;
-          return result.state;
-        }),
-      );
-      setName("");
-      window.location.hash = `${id}/overview`;
-    });
-  }}
->
-  <div className="local-form-heading">
-    <span className="local-form-icon" aria-hidden="true">
-      <Plus size={19} />
-    </span>
-    <div>
-      <span className="local-section-eyebrow">GET STARTED</span>
-      <h2>
-        {state.organizations.length
-          ? "Create another workspace"
-          : "Create your first workspace"}
-      </h2>
-    </div>
-  </div>
-  <label className="field">
-    Workspace name
-    <input
-      required
-      maxLength={120}
-      placeholder="Your business or project"
-      value={name}
-      onChange={(e) => setName(e.target.value)}
-    />
-  </label>
-  <Button disabled={busy} type="submit">
-    <Plus size={16} />
-    Create workspace
-  </Button>
-</form>
+          setName("");
+          window.location.hash = `${id}/overview`;
+        });
+      }}
+    >
+      <div className="local-form-heading">
+        <span className="local-form-icon" aria-hidden="true">
+          <Plus size={19} />
+        </span>
+        <div>
+          <span className="local-section-eyebrow">GET STARTED</span>
+          <h2>
+            {state.organizations.length
+              ? "Create another workspace"
+              : "Create your first workspace"}
+          </h2>
+        </div>
+      </div>
+      <label className="field">
+        Workspace name
+        <input
+          required
+          maxLength={120}
+          placeholder="Your business or project"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </label>
+      <Button disabled={busy} type="submit">
+        <Plus size={16} />
+        Create workspace
+      </Button>
+    </form>
   );
   if (org) {
     const data = localSnapshot(state, org.id);
@@ -469,7 +469,9 @@ export function OfflineApp() {
                   <div className="local-org-card-content">
                     <span className="role-caption">Local workspace</span>
                     <h3>{o.name}</h3>
-                    <p>Open workspace <ArrowRight size={14} aria-hidden="true" /></p>
+                    <p>
+                      Open workspace <ArrowRight size={14} aria-hidden="true" />
+                    </p>
                   </div>
                 </a>
               ))}
@@ -477,7 +479,9 @@ export function OfflineApp() {
           </section>
           <details className="local-add-workspace">
             <summary>
-              <span><Plus size={17} aria-hidden="true" /> Create another workspace</span>
+              <span>
+                <Plus size={17} aria-hidden="true" /> Create another workspace
+              </span>
               <ChevronDown size={16} aria-hidden="true" />
             </summary>
             <div className="local-add-workspace-body">{createForm}</div>
