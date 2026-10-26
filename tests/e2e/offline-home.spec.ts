@@ -70,7 +70,7 @@ test("offline landing stays compact, readable and usable on phones", async ({
       await expect(exportBackup).toBeDisabled();
       await expect(
         page.getByRole("button", { name: "Import backup", exact: true }),
-      ).toHaveCount(0);
+      ).toBeVisible();
       await expect(
         page.getByLabel("Import backup", { exact: true }),
       ).toHaveCount(1);
