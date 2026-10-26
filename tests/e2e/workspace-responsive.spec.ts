@@ -54,6 +54,13 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
   await task.getByRole("button", { name: "Add task" }).click();
   await expect(task).not.toBeVisible();
 
+  const toastDismiss = page.getByRole("button", {
+    name: "Dismiss notification",
+  });
+  if (await toastDismiss.isVisible()) {
+    await toastDismiss.click();
+  }
+
   for (const theme of ["light", "dark"]) {
     await page.evaluate((value) => {
       document.documentElement.dataset.theme = value;
