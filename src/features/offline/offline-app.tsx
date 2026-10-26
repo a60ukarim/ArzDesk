@@ -323,6 +323,59 @@ export function OfflineApp() {
         {error && <Button onClick={() => void reload()}>Try again</Button>}
       </main>
     );
+  const createForm = (
+<form
+  className="panel local-create"
+  onSubmit={(e) => {
+    e.preventDefault();
+    void run(async () => {
+      let id = "";
+      saved(
+        await deviceTransaction((current) => {
+          const result = applyLocalAction(
+            current,
+            "organization.create",
+            "",
+            { name },
+          );
+          id = result.id;
+          return result.state;
+        }),
+      );
+      setName("");
+      window.location.hash = `${id}/overview`;
+    });
+  }}
+>
+  <div className="local-form-heading">
+    <span className="local-form-icon" aria-hidden="true">
+      <Plus size={19} />
+    </span>
+    <div>
+      <span className="local-section-eyebrow">GET STARTED</span>
+      <h2>
+        {state.organizations.length
+          ? "Create another workspace"
+          : "Create your first workspace"}
+      </h2>
+    </div>
+  </div>
+  <label className="field">
+    Workspace name
+    <input
+      required
+      maxLength={120}
+      placeholder="Your business or project"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+    />
+  </label>
+  <Button disabled={busy} type="submit">
+    <Plus size={16} />
+    Create workspace
+  </Button>
+</form>
+  );
   if (org) {
     const data = localSnapshot(state, org.id);
     return (
@@ -392,8 +445,46 @@ export function OfflineApp() {
       </header>
       {status}
       {messages}
-      <div className="local-home-layout">
-        <div className="local-home-overview">
+      {state.organizations.length ? (
+        <div className="local-populated">
+          <div className="workspace-welcome">
+            <span className="eyebrow">YOUR SPACE · ON THIS DEVICE</span>
+            <h1>Your workspaces.</h1>
+            <p>
+              Everything in one place, saved locally. Pick a workspace below to
+              continue, even without an internet connection.
+            </p>
+          </div>
+          <section className="local-workspaces" aria-label="Saved workspaces">
+            <div className="local-workspaces-heading">
+              <h2>Saved workspaces</h2>
+              <span>{state.organizations.length} on this device</span>
+            </div>
+            <div className="org-grid">
+              {state.organizations.map((o) => (
+                <a className="org-card" key={o.id} href={`#${o.id}/overview`}>
+                  <span className="workspace-monogram" aria-hidden="true">
+                    {o.name[0]}
+                  </span>
+                  <div className="local-org-card-content">
+                    <span className="role-caption">Local workspace</span>
+                    <h3>{o.name}</h3>
+                    <p>Open workspace <ArrowRight size={14} aria-hidden="true" /></p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+          <details className="local-add-workspace">
+            <summary>
+              <span><Plus size={17} aria-hidden="true" /> Create another workspace</span>
+              <ChevronDown size={16} aria-hidden="true" />
+            </summary>
+            <div className="local-add-workspace-body">{createForm}</div>
+          </details>
+        </div>
+      ) : (
+        <div className="local-home-layout local-home-empty">
           <div className="workspace-welcome">
             <span className="eyebrow">WORKSPACE · ON THIS DEVICE</span>
             <h1>Your work. Even offline.</h1>
@@ -402,75 +493,9 @@ export function OfflineApp() {
               stay on this device — no account needed.
             </p>
           </div>
-          {!!state.organizations.length && (
-            <div className="org-grid">
-              {state.organizations.map((o) => (
-                <a className="org-card" key={o.id} href={`#${o.id}/overview`}>
-                  <span className="workspace-monogram">{o.name[0]}</span>
-                  <div>
-                    <span className="role-caption">On this device</span>
-                    <h2>{o.name}</h2>
-                    <p>
-                      Open workspace <ArrowRight size={14} aria-hidden="true" />
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          )}
+          {createForm}
         </div>
-        <form
-          className="panel local-create"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void run(async () => {
-              let id = "";
-              saved(
-                await deviceTransaction((current) => {
-                  const result = applyLocalAction(
-                    current,
-                    "organization.create",
-                    "",
-                    { name },
-                  );
-                  id = result.id;
-                  return result.state;
-                }),
-              );
-              setName("");
-              window.location.hash = `${id}/overview`;
-            });
-          }}
-        >
-          <div className="local-form-heading">
-            <span className="local-form-icon" aria-hidden="true">
-              <Plus size={19} />
-            </span>
-            <div>
-              <span className="local-section-eyebrow">GET STARTED</span>
-              <h2>
-                {state.organizations.length
-                  ? "Create another workspace"
-                  : "Create your first workspace"}
-              </h2>
-            </div>
-          </div>
-          <label className="field">
-            Workspace name
-            <input
-              required
-              maxLength={120}
-              placeholder="Your business or project"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </label>
-          <Button disabled={busy} type="submit">
-            <Plus size={16} />
-            Create workspace
-          </Button>
-        </form>
-      </div>
+      )}
       {backupPanel}
     </main>
   );
