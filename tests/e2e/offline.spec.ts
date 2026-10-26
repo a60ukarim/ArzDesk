@@ -190,13 +190,17 @@ test("concurrent tabs preserve both saves and failed storage never reports succe
   await other
     .getByLabel("Workspace name", { exact: true })
     .fill("Second concurrent workspace");
-  await Promise.all([
-    page.getByRole("button", { name: "Create workspace", exact: true }).click(),
-    other
-      .getByRole("button", { name: "Create workspace", exact: true })
-      .click(),
-  ]);
-  // A click dispatches the submit; wait for both committed saves before navigating.
+  // Dispatch both submits without actionability waits between the competing tabs.
+  await Promise.all(
+    [page, other].map((tab) =>
+      tab
+        .getByRole("button", { name: "Create workspace", exact: true })
+        .evaluate((button) =>
+          (button as HTMLButtonElement).form!.requestSubmit(),
+        ),
+    ),
+  );
+  // Wait for both committed saves before navigating.
   await Promise.all([
     expect(page).toHaveURL(/#.+\/overview$/),
     expect(other).toHaveURL(/#.+\/overview$/),
