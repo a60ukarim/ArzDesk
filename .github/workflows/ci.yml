@@ -6,6 +6,37 @@ on:
 permissions:
   contents: read
 jobs:
+  format-review:
+    if: github.event_name == 'pull_request' && github.head_ref == 'feat/windows-desktop-download'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Inspect formatted Windows files
+        run: |
+          npx prettier --write desktop/main.cjs scripts/prepare-desktop.mjs src/app/download/download.css src/app/download/page.tsx
+          echo "ARZDESK_FORMAT_MAIN_BEGIN"
+          base64 -w0 desktop/main.cjs
+          echo
+          echo "ARZDESK_FORMAT_MAIN_END"
+          echo "ARZDESK_FORMAT_PREP_BEGIN"
+          base64 -w0 scripts/prepare-desktop.mjs
+          echo
+          echo "ARZDESK_FORMAT_PREP_END"
+          echo "ARZDESK_FORMAT_STYLE_BEGIN"
+          base64 -w0 src/app/download/download.css
+          echo
+          echo "ARZDESK_FORMAT_STYLE_END"
+          echo "ARZDESK_FORMAT_PAGE_BEGIN"
+          base64 -w0 src/app/download/page.tsx
+          echo
+          echo "ARZDESK_FORMAT_PAGE_END"
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
