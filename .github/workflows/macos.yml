@@ -40,7 +40,8 @@ jobs:
       - run: node scripts/prepare-desktop.mjs
       - run: npm ci --prefix desktop --no-audit --no-fund
       - run: node desktop/node_modules/electron/install.js
-      - run: npm exec --prefix desktop electron-builder -- --mac dmg --${{ matrix.arch }}
+      - run: npm exec -- electron-builder --mac dmg --${{ matrix.arch }}
+        working-directory: desktop
       - name: Mount DMG and test packaged app on its native architecture
         shell: bash
         run: |
