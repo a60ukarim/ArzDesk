@@ -9,6 +9,7 @@ export function AppRegistration() {
     window.addEventListener("beforeinstallprompt", captureInstallPrompt);
     window.addEventListener("appinstalled", clearInstallPrompt);
     if (
+      window.location.protocol !== "arzdesk:" &&
       process.env.NODE_ENV === "production" &&
       window.isSecureContext &&
       "serviceWorker" in navigator
