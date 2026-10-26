@@ -452,13 +452,23 @@ test("a team can register, organize real work, invite a viewer and revoke access
         sidebarScroll: sidebar.scrollHeight,
       };
     });
+    // Desktop keeps the document fixed, but lets its ONE content pane scroll.
+    // Avoid crushing the overview cards just to fit a short laptop screen.
     expect(dimensions.pageHeight).toBeLessThanOrEqual(height);
-    expect(dimensions.paneScroll).toBeLessThanOrEqual(
-      dimensions.paneHeight + 1,
+    expect(dimensions.paneScroll).toBeGreaterThanOrEqual(
+      dimensions.paneHeight,
     );
     expect(dimensions.sidebarScroll).toBeLessThanOrEqual(
       dimensions.sidebarHeight + 1,
     );
+    const scroll = await page.locator(".page-content").evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+      return {
+        scrollTop: el.scrollTop,
+        overflow: getComputedStyle(el).overflowY,
+      };
+    });
+    expect(scroll.overflow).toBe("auto");
     await expect(page.locator(".page-content > .footer")).toBeInViewport();
     if (process.env.ARZDESK_QA_DIR)
       await page.screenshot({
