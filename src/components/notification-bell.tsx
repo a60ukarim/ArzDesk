@@ -150,7 +150,7 @@ export function NotificationBell() {
               {invitations.map((invite) => (
                 <article className="notification-entry" key={invite.id}>
                   <strong dir="auto">{invite.organizationName}</strong>
-                  <p>You're invited to join as {invite.role}.</p>
+                  <p>You&apos;re invited to join as {invite.role}.</p>
                   <small>
                     Expires {new Date(invite.expiresAt).toLocaleDateString()}
                   </small>
@@ -179,7 +179,7 @@ export function NotificationBell() {
           )}
           <p className="notification-footnote">
             Only invitations for your signed-in email appear here. The page
-            checks for new invitations while you're online.
+            checks for new invitations while you&apos;re online.
           </p>
         </section>
       )}
