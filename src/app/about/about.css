@@ -27,7 +27,9 @@
   text-align: center;
   text-decoration: none;
   border-radius: 11px;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .about-page a.launch-cta--dark,
