@@ -41,6 +41,12 @@ function asset(request) {
     return null;
   }
   if (name === "/" || name === "/offline") name = "/offline/index.html";
+  // Next/Image optimizes branding assets on the web. Offline desktop serves the original local images.
+  if (name === "/_next/image") {
+    const image = address.searchParams.get("url");
+    if (!image || !image.startsWith("/") || image.startsWith("//")) return null;
+    name = image;
+  }
   const file = path.resolve(folder, "." + name);
   const relative = path.relative(folder, file);
   if (relative.startsWith("..") || path.isAbsolute(relative)) return null;
