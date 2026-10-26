@@ -13,3 +13,83 @@
   font-size: 18px;
   line-height: 1.3;
 }
+
+/* Keep marketing-page actions independent of app-wide theme and link styles. */
+.about-page a.launch-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 46px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 11px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.about-page a.launch-cta--dark,
+.about-page a.launch-cta--dark:visited {
+  color: #ffffff;
+  background-color: #181818;
+  border: 1px solid #181818;
+}
+
+.about-page a.launch-cta--dark:hover {
+  background-color: #3a3a3a;
+}
+
+.about-page a.launch-cta--light,
+.about-page a.launch-cta--light:visited {
+  color: #181818;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.about-page a.launch-cta--light:hover {
+  background-color: #e7e7e7;
+}
+
+.about-page a.launch-cta--hero-outline,
+.about-page a.launch-cta--hero-outline:visited {
+  color: #ffffff;
+  background-color: transparent;
+  border: 1px solid #787878;
+}
+
+.about-page a.launch-cta--hero-outline:hover {
+  background-color: #303030;
+}
+
+.about-page a.launch-cta--outline,
+.about-page a.launch-cta--outline:visited {
+  color: #181818;
+  background-color: transparent;
+  border: 1px solid #d4d4d4;
+}
+
+.about-page a.launch-cta--outline:hover {
+  background-color: #e8e8e8;
+}
+
+.about-page a.launch-cta:focus-visible {
+  outline: 3px solid #8d86f8;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .about-page h1 {
+    font-size: clamp(36px, 10vw, 50px);
+  }
+
+  .about-page .launch-cta {
+    padding-inline: 16px;
+  }
+
+  .about-page .launch-cta--light,
+  .about-page .launch-cta--hero-outline {
+    min-width: 100%;
+  }
+}
