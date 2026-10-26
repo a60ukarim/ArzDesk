@@ -45,8 +45,6 @@ jobs:
       - run: env -u BETTER_AUTH_SECRET -u BETTER_AUTH_URL npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
-        env:
-          ARZDESK_CAPTURE_LAUNCH: "1"
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
