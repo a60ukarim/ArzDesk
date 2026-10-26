@@ -4,6 +4,7 @@ import { DeveloperCredits } from "@/components/developer-credits";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Brand } from "@/components/brand";
 import { AccountMenu } from "@/components/account-menu";
+import { NotificationBell } from "@/components/notification-bell";
 import { requireUser } from "@/lib/session";
 import { workspace } from "@/features/workspace";
 import { OrganizationForm } from "@/features/workspace/organization-form";
@@ -16,6 +17,7 @@ export default async function Page() {
         <Brand />
         <div className="workspace-account">
           <ThemeSwitcher />
+          <NotificationBell />
           <AccountMenu person={{ name: user.name, email: user.email }} />
         </div>
       </header>

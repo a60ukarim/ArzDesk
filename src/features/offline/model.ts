@@ -103,6 +103,15 @@ export function applyLocalAction(
   };
   const identity = { id: newId, organizationId: orgId, createdAt };
   switch (action) {
+    case "organization.delete": {
+      if (input.confirmation !== org.name)
+        throw new Error("Enter the exact workspace name to confirm deletion.");
+      s.organizations = s.organizations.filter((o) => o.id !== orgId);
+      s.clients = s.clients.filter((c) => c.organizationId !== orgId);
+      s.projects = s.projects.filter((p) => p.organizationId !== orgId);
+      s.tasks = s.tasks.filter((t) => t.organizationId !== orgId);
+      break;
+    }
     case "organization.rename":
       org.name = organizationInput.parse(input).name;
       break;

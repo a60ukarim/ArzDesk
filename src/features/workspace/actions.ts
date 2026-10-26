@@ -24,6 +24,21 @@ export async function mutate(
         revalidatePath("/workspaces");
         revalidatePath(`/w/${orgId}`, "layout");
         break;
+      case "organization.delete":
+        await workspace.deleteOrganization(user.id, orgId, data.confirmation);
+        revalidatePath("/workspaces");
+        return { ok: true };
+      case "invite.respond": {
+        const decision = z.enum(["accept", "decline"]).parse(data.decision);
+        const id = await workspace.respondToInvitation(
+          user.id,
+          data.id,
+          decision,
+        );
+        revalidatePath("/workspaces");
+        revalidatePath(`/w/${id}`, "layout");
+        return { ok: true, id };
+      }
       case "project.status":
         await workspace.setProjectStatus(user.id, orgId, data.id, data.status);
         break;
