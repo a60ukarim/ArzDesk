@@ -3806,7 +3806,6 @@ body:has(.workspace-drawer[open]) {
   }
 }
 
-
 /* Keep navigation and rename as separate accessible actions on workspace cards. */
 .workspace-card-wrap {
   min-width: 0;
