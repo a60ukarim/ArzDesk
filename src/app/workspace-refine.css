@@ -1,0 +1,583 @@
+/* Workspace dashboard layout: responsive across phones and laptops.
+ * Scoped to application workspaces; the marketing pages stay untouched.
+ */
+
+.app-shell .app-main > .page-content {
+  max-width: 1330px;
+}
+
+.app-shell .page-heading > div:first-child {
+  min-width: 0;
+}
+
+.app-shell .page-heading h1 {
+  line-height: 1.2;
+  letter-spacing: -0.028em;
+  text-wrap: pretty;
+}
+
+.app-shell .page-heading p {
+  line-height: 1.55;
+}
+
+.app-shell .panel,
+.app-shell .metric,
+.app-shell .setup-panel {
+  border-radius: 15px;
+}
+
+.app-shell .panel-head {
+  gap: 12px;
+}
+
+.app-shell .panel-head h2 {
+  line-height: 1.3;
+}
+
+.app-shell .panel-head > div {
+  min-width: 0;
+}
+
+/* On laptops the overview should breathe and scroll in one pane, rather
+ * than compressing every panel to fit into one viewport height. */
+@media (min-width: 1101px) {
+  .app-shell .app-main > .page-content {
+    padding: 26px clamp(24px, 2.8vw, 42px) 34px;
+  }
+
+  .app-shell .app-main > .page-content.overview-ready {
+    display: block;
+    height: auto;
+    min-height: 0;
+  }
+
+  .app-shell .overview-ready > .page-heading {
+    margin-bottom: 18px;
+  }
+
+  .app-shell .overview-ready > .metrics {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .app-shell .overview-ready > .daily-flow {
+    margin-bottom: 18px;
+    padding: 16px 20px;
+  }
+
+  .app-shell .overview-ready > .dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
+    flex: none;
+    min-height: 0;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .app-shell .overview-ready .dashboard-grid > .panel {
+    display: block;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .app-shell .overview-ready .project-summaries,
+  .app-shell .overview-ready .task-list {
+    display: block;
+    flex: none;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .app-shell .overview-ready > .footer {
+    margin-top: 22px;
+  }
+
+  .app-shell .section-clients .table-wrap td,
+  .app-shell .section-projects .table-wrap td,
+  .app-shell .section-tasks .table-wrap td,
+  .app-shell .section-team .table-wrap td {
+    padding-block: 13px;
+  }
+
+  .app-shell .section-clients .table-wrap th,
+  .app-shell .section-projects .table-wrap th,
+  .app-shell .section-tasks .table-wrap th,
+  .app-shell .section-team .table-wrap th {
+    padding-block: 12px;
+  }
+}
+
+@media (min-width: 1101px) and (max-width: 1390px) {
+  .app-shell .overview-ready > .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .app-shell .overview-ready .daily-flow p {
+    max-width: 520px;
+  }
+
+  .app-shell .overview-ready .metric {
+    padding: 14px 15px;
+  }
+
+  .app-shell .overview-ready .metric-top {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-shell .app-main > .page-content {
+    max-width: 1040px;
+    padding: 23px clamp(16px, 3vw, 28px) 34px;
+  }
+
+  .app-shell .app-main > .topbar {
+    padding: 10px clamp(16px, 3vw, 28px);
+    gap: 8px;
+  }
+
+  .app-shell .app-main .top-right {
+    min-width: 0;
+  }
+
+  .app-shell .app-main .workspace-select {
+    min-width: 0;
+    text-overflow: ellipsis;
+  }
+
+  .app-shell .page-heading {
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+
+  .app-shell .dashboard-grid {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 800px) {
+  .app-shell .page-heading h1 {
+    font-size: clamp(23px, 4.8vw, 29px);
+  }
+
+  .app-shell .page-heading p {
+    max-width: 54ch;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .app-shell .work-path {
+    gap: 8px;
+    padding-bottom: 11px;
+    margin-bottom: 14px;
+  }
+
+  .app-shell .work-path a {
+    font-size: 11px;
+  }
+
+  .app-shell .panel-head {
+    padding: 16px 18px;
+    align-items: center;
+  }
+
+  .app-shell .panel-head h2 {
+    font-size: 15px;
+  }
+
+  .app-shell .panel-head p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .app-shell .toolbar {
+    align-items: stretch;
+    gap: 11px;
+    margin-bottom: 14px;
+  }
+
+  .app-shell .toolbar .search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .app-shell .toolbar-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+    gap: 10px;
+    width: 100%;
+  }
+
+  .app-shell .toolbar-filter,
+  .app-shell .toolbar-filter select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .app-shell .table-wrap tbody {
+    gap: 11px;
+    padding: 0 14px 14px;
+  }
+
+  .app-shell .table-wrap tbody > tr {
+    border-radius: 12px;
+  }
+
+  .app-shell .table-wrap td {
+    gap: 6px;
+    padding: 11px 13px;
+    line-height: 1.5;
+  }
+
+  .app-shell .table-wrap td.row-title {
+    padding-block: 14px;
+  }
+
+  .app-shell .table-wrap td:last-child {
+    padding-block: 11px;
+  }
+
+  .app-shell .table-wrap .record-actions {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .app-shell .table-wrap .row-actions {
+    margin-left: 0;
+  }
+
+  .app-shell .table-wrap .record-actions .btn,
+  .app-shell .table-wrap .row-actions .btn {
+    min-height: 42px;
+  }
+
+  .app-shell .settings-grid {
+    gap: 14px;
+  }
+
+  .app-shell .settings-card {
+    padding: 20px;
+  }
+
+  .app-shell .setup-panel {
+    max-width: none;
+    padding: 22px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-shell .app-main > .page-content {
+    padding: 17px 14px 30px;
+  }
+
+  .app-shell .app-main > .topbar {
+    padding: 8px 14px 9px;
+    gap: 4px;
+  }
+
+  .app-shell .mobile-workspace-heading {
+    gap: 10px;
+  }
+
+  .app-shell .mobile-workspace-heading .brand-logo {
+    height: 32px;
+    width: 32px;
+  }
+
+  .app-shell .mobile-workspace-heading .brand-copy strong {
+    font-size: 17px;
+  }
+
+  .app-shell .mobile-workspace-heading .brand-copy small {
+    display: none;
+  }
+
+  .app-shell .workspace-menu-trigger {
+    padding: 7px 10px;
+    min-height: 40px;
+    font-size: 12px;
+  }
+
+  .app-shell .top-right {
+    gap: 6px;
+  }
+
+  .app-shell .top-right .local-device-badge {
+    display: none;
+  }
+
+  .app-shell .top-right .workspace-select {
+    min-height: 40px;
+    font-size: 12px;
+  }
+
+  .app-shell .page-heading {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .app-shell .page-heading h1 {
+    font-size: 24px;
+  }
+
+  .app-shell .page-heading p {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .app-shell .heading-actions .btn {
+    min-height: 42px;
+  }
+
+  /* Section navigation already exists inside the menu drawer on phones. */
+  .app-shell .work-path {
+    display: none;
+  }
+
+  .app-shell .context-strip {
+    gap: 7px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+  }
+
+  .app-shell .metrics {
+    gap: 9px;
+    margin-bottom: 13px;
+  }
+
+  .app-shell .metric {
+    padding: 12px 13px;
+    border-radius: 12px;
+  }
+
+  .app-shell .metric-top {
+    font-size: 10px;
+  }
+
+  .app-shell .metric-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .app-shell .metric-value {
+    margin-top: 8px;
+    font-size: 25px;
+  }
+
+  .app-shell .daily-flow {
+    gap: 12px;
+    margin-bottom: 13px;
+    padding: 16px;
+  }
+
+  .app-shell .daily-flow h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .app-shell .daily-flow p,
+  .app-shell .setup-help {
+    display: none;
+  }
+
+  .app-shell .daily-flow .btn {
+    min-height: 42px;
+  }
+
+  .app-shell .setup-panel {
+    padding: 18px 16px;
+  }
+
+  .app-shell .setup-panel h2 {
+    font-size: 19px;
+  }
+
+  .app-shell .setup-panel-copy p {
+    margin-top: 6px;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .app-shell .setup-cta {
+    margin-top: 14px;
+  }
+
+  .app-shell .setup-progress {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 16px;
+  }
+
+  .app-shell .setup-progress li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 0;
+    padding: 12px 4px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .app-shell .setup-progress li + li {
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .app-shell .setup-progress strong {
+    font-size: 10px;
+  }
+
+  .app-shell .setup-progress small {
+    display: none;
+  }
+
+  .app-shell .dashboard-grid {
+    gap: 13px;
+  }
+
+  .app-shell .panel-head {
+    padding: 14px;
+  }
+
+  .app-shell .task-list,
+  .app-shell .project-summaries {
+    padding-inline: 14px;
+  }
+
+  .app-shell .task-row,
+  .app-shell .project-summary {
+    padding-block: 12px;
+  }
+
+  .app-shell .table-wrap tbody {
+    padding: 0 10px 10px;
+    gap: 9px;
+  }
+
+  .app-shell .table-wrap td {
+    padding: 10px 11px;
+    font-size: 11px;
+  }
+
+  .app-shell .table-wrap td.row-title {
+    padding-block: 13px;
+  }
+
+  .app-shell .table-wrap td::before {
+    font-size: 9px;
+  }
+
+  .app-shell .table-wrap .entity-icon {
+    width: 29px;
+    height: 29px;
+  }
+
+  .app-shell .table-wrap .row-actions {
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .app-shell .table-wrap .record-actions .btn,
+  .app-shell .table-wrap .row-actions .btn {
+    min-height: 40px;
+  }
+
+  .app-shell .settings-card {
+    padding: 18px 16px;
+  }
+
+  .app-shell .settings-card-heading {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .app-shell .settings-description {
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .app-shell .modal-head {
+    padding: 18px 17px;
+  }
+
+  .app-shell .modal-body {
+    padding: 0 17px 18px;
+  }
+
+  .app-shell .modal-actions {
+    gap: 7px;
+    margin-top: 17px;
+    padding-top: 15px;
+  }
+
+  .app-shell .footer {
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-shell .app-main > .page-content {
+    padding-inline: 11px;
+  }
+
+  .app-shell .app-main > .topbar {
+    padding-inline: 11px;
+  }
+
+  .app-shell .panel-head {
+    padding: 12px;
+  }
+
+  .app-shell .table-wrap td {
+    padding-inline: 9px;
+  }
+
+  .app-shell .table-wrap .record-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* Device mode's status is a quiet one-line assurance, not another toolbar. */
+.app-shell .local-workspace-content > .local-status {
+  min-height: 42px;
+  padding: 8px clamp(14px, 2.8vw, 34px);
+  gap: 8px 14px;
+}
+
+.app-shell .local-workspace-content .local-status-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--foreground);
+  font-weight: 750;
+}
+
+@media (max-width: 600px) {
+  .app-shell .local-workspace-content > .local-status {
+    padding: 7px 14px;
+    min-height: 40px;
+    font-size: 11px;
+  }
+
+  .app-shell .local-workspace-content .local-status-caption {
+    display: none;
+  }
+
+  .app-shell .local-workspace-content .local-status > a {
+    min-height: 28px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  /* The same switcher remains in the menu on extra narrow phones. */
+  .app-shell .local-workspace-content .local-status > a {
+    display: none;
+  }
+}
