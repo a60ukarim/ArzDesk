@@ -131,20 +131,6 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
             body: await page.screenshot({ fullPage: true }),
             contentType: "image/png",
           });
-          if (process.env.ARZDESK_CAPTURE_WORKSPACE === "1") {
-            const encoded = (
-              await page.screenshot({
-                type: "jpeg",
-                quality: 65,
-                fullPage: true,
-              })
-            ).toString("base64");
-            console.log("ARZDESK_MOBILE_VISUAL_BEGIN");
-            for (let i = 0; i < encoded.length; i += 3500) {
-              console.log("ARZDESK_MOBILE_PART=" + encoded.slice(i, i + 3500));
-            }
-            console.log("ARZDESK_MOBILE_VISUAL_END");
-          }
         }
 
         if (width === 1366 && section === "overview" && theme === "light") {
@@ -152,20 +138,6 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
             body: await page.screenshot({ fullPage: true }),
             contentType: "image/png",
           });
-          if (process.env.ARZDESK_CAPTURE_WORKSPACE === "1") {
-            const encoded = (
-              await page.screenshot({
-                type: "jpeg",
-                quality: 65,
-                fullPage: true,
-              })
-            ).toString("base64");
-            console.log("ARZDESK_LAPTOP_VISUAL_BEGIN");
-            for (let i = 0; i < encoded.length; i += 3500) {
-              console.log("ARZDESK_LAPTOP_PART=" + encoded.slice(i, i + 3500));
-            }
-            console.log("ARZDESK_LAPTOP_VISUAL_END");
-          }
         }
       }
     }
