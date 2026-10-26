@@ -433,3 +433,277 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Populated landing: keep saved workspaces together, not in a tall sidebar.
+   Only the initial empty state uses the two-column intro + form layout. */
+.local-home {
+  max-width: 1190px;
+  padding-top: 22px;
+}
+
+.local-home .workspaces-head {
+  margin-bottom: 22px;
+}
+
+.local-home > .local-status {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 38px;
+  align-self: flex-start;
+  border-radius: 999px;
+  padding: 7px 14px;
+  margin: 0 0 32px;
+  box-shadow: none;
+}
+
+.local-home > .local-status > a {
+  display: none;
+}
+
+.local-populated {
+  display: grid;
+  gap: 22px;
+}
+
+.local-populated .workspace-welcome {
+  max-width: 690px;
+}
+
+.local-populated .workspace-welcome h1 {
+  margin-top: 7px !important;
+  font-size: clamp(30px, 3.3vw, 43px);
+}
+
+.local-populated .workspace-welcome > p {
+  max-width: 640px;
+  margin-top: 10px;
+}
+
+.local-workspaces {
+  min-width: 0;
+}
+
+.local-workspaces-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.local-workspaces-heading h2 {
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+.local-workspaces-heading span {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.local-populated .org-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+}
+
+.local-populated .org-card {
+  min-width: 0;
+  min-height: 132px;
+  align-items: flex-start;
+  padding: 22px 18px;
+  gap: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px light-dark(#2734520b, #00000020);
+}
+
+.local-populated .org-card:hover,
+.local-populated .org-card:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 6px 22px light-dark(#5145d91a, #5145d932);
+}
+
+.local-populated .workspace-monogram {
+  width: 43px;
+  height: 43px;
+  border-radius: 11px;
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.local-org-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.local-org-card-content h3 {
+  font-size: 15px;
+  line-height: 1.38;
+  margin-top: 5px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.local-org-card-content p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 13px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.local-add-workspace {
+  width: 100%;
+  max-width: 440px;
+  min-width: 0;
+  margin: 0 0 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.local-add-workspace summary {
+  min-height: 48px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 800;
+  list-style: none;
+}
+
+.local-add-workspace summary::-webkit-details-marker {
+  display: none;
+}
+
+.local-add-workspace summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.local-add-workspace summary > span svg {
+  color: var(--primary);
+}
+
+.local-add-workspace summary > svg {
+  color: var(--muted);
+  transition: transform 160ms ease;
+}
+
+.local-add-workspace[open] summary > svg {
+  transform: rotate(180deg);
+}
+
+.local-add-workspace summary:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: -3px;
+}
+
+.local-add-workspace-body {
+  padding: 0 14px 14px;
+}
+
+.local-add-workspace-body .local-create {
+  padding: 18px;
+  box-shadow: none;
+  border-radius: 12px;
+  background: var(--background);
+}
+
+.local-add-workspace-body .local-form-heading {
+  align-items: flex-start;
+}
+
+.local-add-workspace-body .local-form-heading h2 {
+  font-size: 16px;
+}
+
+.local-home > .local-backup {
+  margin-top: 4px;
+  padding: 25px 28px;
+  border-radius: 17px;
+  gap: 28px;
+  align-items: start;
+}
+
+.local-backup-main .local-online-link {
+  margin-top: 3px;
+}
+
+@media (max-width: 960px) {
+  .local-populated .org-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .local-home > .local-backup {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .local-home {
+    padding: 15px 15px 28px;
+  }
+
+  .local-home > .local-status {
+    margin-bottom: 22px;
+    min-height: 38px;
+    border-radius: 11px;
+  }
+
+  .local-home > .local-status > .local-status-caption {
+    width: auto;
+    margin: 0;
+  }
+
+  .local-populated {
+    gap: 18px;
+  }
+
+  .local-populated .workspace-welcome h1 {
+    font-size: 28px;
+  }
+
+  .local-populated .org-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .local-populated .org-card {
+    min-height: 92px;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .local-org-card-content p {
+    margin-top: 7px;
+  }
+
+  .local-add-workspace {
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  .local-home > .local-backup {
+    padding: 20px 17px;
+    margin-top: 5px;
+  }
+
+  .local-home-empty {
+    margin-top: 6px;
+  }
+}
