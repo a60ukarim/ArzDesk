@@ -11,7 +11,7 @@ test("public product page has readable calls to action and fits mobile", async (
   const buttons = [
     {
       label: "Install ArzDesk",
-      href: "/install",
+      href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgb(24, 24, 24)",
     },
@@ -23,13 +23,13 @@ test("public product page has readable calls to action and fits mobile", async (
     },
     {
       label: "Install on your device",
-      href: "/install",
+      href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgba(0, 0, 0, 0)",
     },
     {
       label: "See installation steps",
-      href: "/install",
+      href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgb(24, 24, 24)",
     },

@@ -196,6 +196,11 @@ test("concurrent tabs preserve both saves and failed storage never reports succe
       .getByRole("button", { name: "Create workspace", exact: true })
       .click(),
   ]);
+  // A click dispatches the submit; wait for both committed saves before navigating.
+  await Promise.all([
+    expect(page).toHaveURL(/#.+\/overview$/),
+    expect(other).toHaveURL(/#.+\/overview$/),
+  ]);
   await page.goto("/offline");
   await expect(
     page.getByRole("heading", {
