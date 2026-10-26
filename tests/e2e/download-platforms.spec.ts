@@ -12,9 +12,13 @@ test("download hub shows mobile install routes and honest desktop status", async
     const platforms = page.locator(".download-platform");
     await expect(platforms).toHaveCount(4);
     await expect(page.getByRole("heading", { name: "Windows" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "MacBook & Mac" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "MacBook & Mac" }),
+    ).toBeVisible();
     await expect(page.getByRole("heading", { name: "Android" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "iPhone & iPad" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "iPhone & iPad" }),
+    ).toBeVisible();
     await expect(
       page.getByRole("link", { name: "Install on Android (PWA)" }),
     ).toHaveAttribute("href", "/install#installation-steps");
@@ -27,7 +31,9 @@ test("download hub shows mobile install routes and honest desktop status", async
   }
 });
 
-test("phone install page supplies Android and iPhone steps", async ({ page }) => {
+test("phone install page supplies Android and iPhone steps", async ({
+  page,
+}) => {
   await page.goto("/install#installation-steps");
   await expect(page.getByRole("heading", { name: "Android" })).toBeVisible();
   await expect(
