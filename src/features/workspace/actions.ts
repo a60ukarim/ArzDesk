@@ -30,7 +30,11 @@ export async function mutate(
         return { ok: true };
       case "invite.respond": {
         const decision = z.enum(["accept", "decline"]).parse(data.decision);
-        const id = await workspace.respondToInvitation(user.id, data.id, decision);
+        const id = await workspace.respondToInvitation(
+          user.id,
+          data.id,
+          decision,
+        );
         revalidatePath("/workspaces");
         revalidatePath(`/w/${id}`, "layout");
         return { ok: true, id };
