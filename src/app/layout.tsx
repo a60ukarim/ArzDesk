@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { AppRegistration } from "@/components/app-registration";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import "./workspace-refine.css";
 import { FeedbackProvider } from "@/components/feedback-provider";
 const inter = localFont({
   src: "./fonts/Inter.woff2",
