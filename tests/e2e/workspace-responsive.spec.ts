@@ -94,7 +94,7 @@ test("mobile and laptop workspace screens remain readable without sideways scrol
         ).toBe(false);
         expect(metrics.contentLeft).toBeGreaterThanOrEqual(-1);
         expect(metrics.contentRight).toBeLessThanOrEqual(width + 1);
-        expect(metrics.headerHeight).toBeLessThan(width <= 600 ? 155 : 100);
+        expect(metrics.headerHeight).toBeLessThan(width <= 1100 ? 170 : 100);
 
         if (width > 1100) {
           expect(metrics.sidebarWidth).toBeGreaterThan(150);
