@@ -102,7 +102,9 @@ test("device work survives offline CRUD, cold reopen and backup restoration", as
   // A second tab saves independently; switching tabs must not lose its work.
   const second = await context.newPage();
   await second.goto("/offline");
-  await second.getByText("Create another workspace", { exact: true }).click();
+  await second
+    .getByText("Create another workspace", { exact: true })
+    .click();
   await second
     .getByLabel("Workspace name", { exact: true })
     .fill("Second workspace");
