@@ -6,6 +6,34 @@ on:
 permissions:
   contents: read
 jobs:
+  format-review:
+    if: github.event_name == 'pull_request' && github.head_ref == 'fix/offline-home-desktop-cache-refresh'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Generate exact formatting for review
+        run: |
+          npx prettier --write src/features/offline/offline-app.tsx src/app/offline/offline.css public/sw.js next.config.ts tests/e2e/offline-populated.spec.ts
+          for spec in JSX CSS SW CONFIG TEST; do
+            case "$spec" in
+              JSX) file=src/features/offline/offline-app.tsx ;;
+              CSS) file=src/app/offline/offline.css ;;
+              SW) file=public/sw.js ;;
+              CONFIG) file=next.config.ts ;;
+              TEST) file=tests/e2e/offline-populated.spec.ts ;;
+            esac
+            echo "ARZDESK_READY_${spec}_BEGIN"
+            base64 -w0 "$file"
+            echo
+            echo "ARZDESK_READY_${spec}_END"
+          done
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -45,6 +73,8 @@ jobs:
       - run: env -u BETTER_AUTH_SECRET -u BETTER_AUTH_URL npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+        env:
+          ARZDESK_CAPTURE_HOME: "1"
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
