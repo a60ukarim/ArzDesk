@@ -541,3 +541,43 @@
     flex-wrap: wrap;
   }
 }
+
+/* Device mode's status is a quiet one-line assurance, not another toolbar. */
+.app-shell .local-workspace-content > .local-status {
+  min-height: 42px;
+  padding: 8px clamp(14px, 2.8vw, 34px);
+  gap: 8px 14px;
+}
+
+.app-shell .local-workspace-content .local-status-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--foreground);
+  font-weight: 750;
+}
+
+@media (max-width: 600px) {
+  .app-shell .local-workspace-content > .local-status {
+    padding: 7px 14px;
+    min-height: 40px;
+    font-size: 11px;
+  }
+
+  .app-shell .local-workspace-content .local-status-caption {
+    display: none;
+  }
+
+  .app-shell .local-workspace-content .local-status > a {
+    min-height: 28px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  /* The same switcher remains in the menu on extra narrow phones. */
+  .app-shell .local-workspace-content .local-status > a {
+    display: none;
+  }
+}
