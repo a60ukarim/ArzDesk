@@ -6,29 +6,6 @@ on:
 permissions:
   contents: read
 jobs:
-  format-review:
-    if: github.event_name == 'pull_request' && github.head_ref == 'feat/windows-desktop-download'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - name: Report formatted desktop source
-        run: |
-          npx prettier --write desktop/main.cjs scripts/prepare-desktop.mjs
-          echo ARZDESK_MAIN_BEGIN
-          base64 -w0 desktop/main.cjs
-          echo
-          echo ARZDESK_MAIN_END
-          echo ARZDESK_PREP_BEGIN
-          base64 -w0 scripts/prepare-desktop.mjs
-          echo
-          echo ARZDESK_PREP_END
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
