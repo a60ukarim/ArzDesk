@@ -6,29 +6,6 @@ on:
 permissions:
   contents: read
 jobs:
-  format-review:
-    if: github.event_name == 'pull_request' && github.head_ref == 'feat/all-device-download-hub'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - name: Format and capture two files
-        run: |
-          npx prettier --write src/app/download/page.tsx tests/e2e/download-platforms.spec.ts
-          echo ARZDESK_PLATFORM_PAGE_BEGIN
-          base64 -w0 src/app/download/page.tsx
-          echo
-          echo ARZDESK_PLATFORM_PAGE_END
-          echo ARZDESK_PLATFORM_TEST_BEGIN
-          base64 -w0 tests/e2e/download-platforms.spec.ts
-          echo
-          echo ARZDESK_PLATFORM_TEST_END
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
