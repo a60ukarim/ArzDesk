@@ -96,7 +96,11 @@ export function WorkspaceRenameControl({ orgId, name, onRename }: Props) {
           <p className="workspace-rename-hint">
             Projects, clients, tasks and workspace links stay unchanged.
           </p>
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
           <div className="workspace-rename-actions">
             <button type="button" disabled={busy} onClick={close}>
               <X size={13} aria-hidden="true" /> Cancel
