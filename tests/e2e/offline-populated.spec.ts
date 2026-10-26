@@ -42,11 +42,14 @@ test("three local workspaces share one responsive grid and do not crowd desktop"
       await page.setViewportSize({ width, height: 900 });
 
       const positions = await page.evaluate(() => {
-        const boxes = [...document.querySelectorAll(".local-workspaces .org-card")]
-          .map((el) => el.getBoundingClientRect());
-        const backup = document.querySelector(".local-home > .local-backup")!
+        const boxes = [
+          ...document.querySelectorAll(".local-workspaces .org-card"),
+        ].map((el) => el.getBoundingClientRect());
+        const backup = document
+          .querySelector(".local-home > .local-backup")!
           .getBoundingClientRect();
-        const add = document.querySelector(".local-add-workspace")!
+        const add = document
+          .querySelector(".local-add-workspace")!
           .getBoundingClientRect();
         const grid = document.querySelector(".local-workspaces .org-grid")!;
         return {
@@ -61,8 +64,10 @@ test("three local workspaces share one responsive grid and do not crowd desktop"
         };
       });
 
-      expect(positions.scrollWidth, `No overflow at ${width}px/${theme}`)
-        .toBeLessThanOrEqual(width);
+      expect(
+        positions.scrollWidth,
+        `No overflow at ${width}px/${theme}`,
+      ).toBeLessThanOrEqual(width);
       for (const right of positions.cardRights) {
         expect(right).toBeLessThanOrEqual(width + 1);
       }
@@ -76,7 +81,9 @@ test("three local workspaces share one responsive grid and do not crowd desktop"
         expect(positions.cardTops[1]).toBeGreaterThan(positions.cardTops[0]);
         expect(positions.cardTops[2]).toBeGreaterThan(positions.cardTops[1]);
       }
-      expect(positions.extraTop).toBeGreaterThanOrEqual(positions.lastCardBottom);
+      expect(positions.extraTop).toBeGreaterThanOrEqual(
+        positions.lastCardBottom,
+      );
       expect(positions.backupTop).toBeGreaterThan(positions.extraTop);
 
       if (theme === "light" && width === 1366) {
@@ -116,8 +123,10 @@ test("three local workspaces share one responsive grid and do not crowd desktop"
   // Workspaces are separate records even if users give them the same name.
   // Never silently deduplicate, rename or delete existing local data.
   expect(
-    await page.locator(".local-workspaces .org-card").evaluateAll(
-      (cards) => new Set(cards.map((card) => card.getAttribute("href"))).size,
-    ),
+    await page
+      .locator(".local-workspaces .org-card")
+      .evaluateAll(
+        (cards) => new Set(cards.map((card) => card.getAttribute("href"))).size,
+      ),
   ).toBe(3);
 });
