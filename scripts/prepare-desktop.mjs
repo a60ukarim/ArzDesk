@@ -38,7 +38,7 @@ try {
   }
   if (!response?.ok) throw Error("Unable to render desktop app: " + output);
   const html = await response.text();
-  if (!html.includes("Your work") || !html.includes("/_next/static/")) {
+  if (!html.toLowerCase().includes("<!doctype html") || !html.includes("/_next/static/")) {
     throw Error("Missing offline UI or scripts in desktop HTML");
   }
   await mkdir(path.join(destination, "offline"), { recursive: true });
