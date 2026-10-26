@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { AccountMenu } from "@/components/account-menu";
+import { NotificationBell } from "@/components/notification-bell";
 import { Brand } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useWorkspaceRuntime } from "./runtime";
