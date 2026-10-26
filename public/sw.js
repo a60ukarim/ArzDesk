@@ -45,10 +45,20 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || url.origin !== self.location.origin)
     return;
   if (url.pathname === "/offline" && event.request.mode === "navigate") {
+    // Online: request the latest public shell instead of displaying a weeks-old
+    // cached page. Offline: use the last fully installed shell, preserving
+    // IndexedDB and all workspace records.
     event.respondWith(
-      (async () =>
-        (await (await caches.open(cacheName)).match("/offline")) ||
-        fetch(event.request))(),
+      (async () => {
+        try {
+          const fresh = await fetch(event.request, { cache: "no-store" });
+          if (fresh.ok) return fresh;
+        } catch {
+          // No connection: cached shell below.
+        }
+        const cached = await (await caches.open(cacheName)).match("/offline");
+        return cached || Response.error();
+      })(),
     );
     return;
   }
