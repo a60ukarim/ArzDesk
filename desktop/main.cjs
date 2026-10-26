@@ -129,7 +129,9 @@ async function boot() {
         if (!ok) await new Promise((resolve) => setTimeout(resolve, 300));
       }
       if (!ok) {
-        const diagnostic = await window.webContents.executeJavaScript('({url:location.href,html:document.body.innerText.slice(0,400),hasPage:!!document.querySelector(".local-home"),inputCount:document.querySelectorAll("input").length})');
+        const diagnostic = await window.webContents.executeJavaScript(
+          '({url:location.href,html:document.body.innerText.slice(0,400),hasPage:!!document.querySelector(".local-home"),inputCount:document.querySelectorAll("input").length})',
+        );
         console.log("ARZDESK_DESKTOP_DOM", JSON.stringify(diagnostic));
       }
       console.log(
