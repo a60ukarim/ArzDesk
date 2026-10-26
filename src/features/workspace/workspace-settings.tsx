@@ -6,6 +6,7 @@ import { Building2, Users, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFeedback } from "@/components/feedback-provider";
 import type { Role } from "./policy";
+import { WorkspaceDangerZone } from "./workspace-danger-zone";
 export function WorkspaceSettings({
   orgId,
   name,
@@ -96,6 +97,7 @@ export function WorkspaceSettings({
           </>
         )}
       </section>
+      {role === "owner" && <WorkspaceDangerZone orgId={orgId} name={name} />}
       {local ? (
         local.settings
       ) : (
