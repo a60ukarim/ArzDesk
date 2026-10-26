@@ -1,0 +1,52 @@
+{
+  "name": "arzdesk-desktop",
+  "version": "0.7.0-beta.1",
+  "description": "ArzDesk offline application for Windows",
+  "productName": "ArzDesk",
+  "main": "main.cjs",
+  "private": true,
+  "author": "ArzCore Technologies",
+  "license": "MIT",
+  "scripts": {
+    "dist:win": "electron-builder --win nsis --x64"
+  },
+  "devDependencies": {
+    "electron": "44.9.3",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "com.arzcore.arzdesk",
+    "productName": "ArzDesk",
+    "directories": {
+      "output": "../dist-windows"
+    },
+    "files": [
+      "main.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "bundle",
+        "to": "app-bundle"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "ArzDesk-Setup-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "ArzDesk"
+    }
+  }
+}
