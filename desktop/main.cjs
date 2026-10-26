@@ -110,6 +110,8 @@ async function boot() {
       void external(target);
     }
   });
+  window.webContents.on("console-message", (_event, details) => console.log("DESKTOP_CONSOLE", details.message));
+  window.webContents.on("did-fail-load", (_event, code, desc, target) => console.error("DESKTOP_LOAD_FAILED", code, desc, target));
   await window.loadURL(HOME);
   if (process.argv.includes("--smoke-test")) {
     try {
