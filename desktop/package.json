@@ -8,7 +8,8 @@
   "author": "ArzCore Technologies",
   "license": "MIT",
   "scripts": {
-    "dist:win": "electron-builder --win nsis --x64"
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:mac": "electron-builder --mac dmg --x64 --arm64"
   },
   "devDependencies": {
     "electron": "44.9.3",
@@ -47,6 +48,21 @@
       "perMachine": false,
       "createDesktopShortcut": true,
       "shortcutName": "ArzDesk"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "artifactName": "ArzDesk-${version}-mac-${arch}.${ext}",
+      "hardenedRuntime": false,
+      "identity": null
     }
   }
 }
