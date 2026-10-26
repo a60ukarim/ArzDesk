@@ -6,42 +6,6 @@ on:
 permissions:
   contents: read
 jobs:
-  format-review:
-    if: github.event_name == 'pull_request' && github.head_ref == 'feat/workspace-delete-invite-notifications'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - name: Format release files
-        run: |
-          npx prettier --write src/features/workspace/service.ts src/features/workspace/actions.ts src/app/api/notifications/route.ts src/features/offline/model.ts src/features/workspace/workspace-danger-zone.tsx src/features/workspace/workspace-settings.tsx src/components/notification-bell.tsx src/features/workspace/workspace-shell.tsx src/app/workspaces/page.tsx src/app/workspace-refine.css tests/offline.test.ts tests/workspace.test.ts tests/e2e/workspace-delete.spec.ts
-          for spec in F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12; do
-            case "$spec" in
-              F0) file=src/features/workspace/service.ts ;;
-              F1) file=src/features/workspace/actions.ts ;;
-              F2) file=src/app/api/notifications/route.ts ;;
-              F3) file=src/features/offline/model.ts ;;
-              F4) file=src/features/workspace/workspace-danger-zone.tsx ;;
-              F5) file=src/features/workspace/workspace-settings.tsx ;;
-              F6) file=src/components/notification-bell.tsx ;;
-              F7) file=src/features/workspace/workspace-shell.tsx ;;
-              F8) file=src/app/workspaces/page.tsx ;;
-              F9) file=src/app/workspace-refine.css ;;
-              F10) file=tests/offline.test.ts ;;
-              F11) file=tests/workspace.test.ts ;;
-              F12) file=tests/e2e/workspace-delete.spec.ts ;;
-            esac
-            echo "ARZDESK_FORM_${spec}_BEGIN"
-            base64 -w0 "$file"
-            echo
-            echo "ARZDESK_FORM_${spec}_END"
-          done
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
