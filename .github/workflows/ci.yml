@@ -6,6 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
+  format-review:
+    if: github.event_name == 'pull_request' && github.head_ref == 'feat/windows-desktop-download'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Print formatted Electron file
+        run: |
+          npx prettier --write desktop/main.cjs
+          echo ARZDESK_ELECTRON_START
+          base64 -w0 desktop/main.cjs
+          echo
+          echo ARZDESK_ELECTRON_END
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
