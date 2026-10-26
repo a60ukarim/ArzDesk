@@ -472,7 +472,8 @@ export function OfflineApp() {
                       <span className="role-caption">Local workspace</span>
                       <h3>{o.name}</h3>
                       <p>
-                        Open workspace <ArrowRight size={14} aria-hidden="true" />
+                        Open workspace{" "}
+                        <ArrowRight size={14} aria-hidden="true" />
                       </p>
                     </div>
                   </a>
@@ -481,13 +482,14 @@ export function OfflineApp() {
                     name={o.name}
                     onRename={async (nextName) => {
                       try {
-                        const updated = await deviceTransaction((current) =>
-                          applyLocalAction(
-                            current,
-                            "organization.rename",
-                            o.id,
-                            { name: nextName },
-                          ).state,
+                        const updated = await deviceTransaction(
+                          (current) =>
+                            applyLocalAction(
+                              current,
+                              "organization.rename",
+                              o.id,
+                              { name: nextName },
+                            ).state,
                         );
                         saved(updated);
                         return { ok: true };
