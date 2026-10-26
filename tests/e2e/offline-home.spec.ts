@@ -51,7 +51,10 @@ test("offline landing stays compact, readable and usable on phones", async ({
         };
       });
 
-      expect(layout.overflow, `Horizontal overflow at ${width}px / ${theme}`).toBe(false);
+      expect(
+        layout.overflow,
+        `Horizontal overflow at ${width}px / ${theme}`,
+      ).toBe(false);
       expect(layout.statusHeight).toBeLessThan(90);
       expect(layout.backupTop).toBeGreaterThanOrEqual(layout.formBottom);
 
@@ -68,7 +71,9 @@ test("offline landing stays compact, readable and usable on phones", async ({
       await expect(
         page.getByRole("button", { name: "Import backup", exact: true }),
       ).toHaveCount(0);
-      await expect(page.getByLabel("Import backup", { exact: true })).toHaveCount(1);
+      await expect(
+        page.getByLabel("Import backup", { exact: true }),
+      ).toHaveCount(1);
 
       if (width === 390 && theme === "light") {
         await testInfo.attach("offline-home-mobile.png", {
@@ -84,7 +89,9 @@ test("offline landing stays compact, readable and usable on phones", async ({
           const encoded = jpeg.toString("base64");
           console.log("ARZDESK_OFFLINE_VISUAL_BEGIN");
           for (let i = 0; i < encoded.length; i += 3500) {
-            console.log("ARZDESK_OFFLINE_VISUAL_PART=" + encoded.slice(i, i + 3500));
+            console.log(
+              "ARZDESK_OFFLINE_VISUAL_PART=" + encoded.slice(i, i + 3500),
+            );
           }
           console.log("ARZDESK_OFFLINE_VISUAL_END");
         }
