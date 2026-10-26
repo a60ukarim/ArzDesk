@@ -6,6 +6,33 @@ on:
 permissions:
   contents: read
 jobs:
+  format-review:
+    if: github.event_name == 'pull_request' && github.head_ref == 'design/offline-home-polish'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Generate formatted design files for review
+        run: |
+          npx prettier --write src/features/offline/offline-app.tsx src/app/offline/offline.css tests/e2e/offline-home.spec.ts
+          echo 'ARZDESK_FORMAT_JSX_BEGIN'
+          base64 -w0 src/features/offline/offline-app.tsx
+          echo
+          echo 'ARZDESK_FORMAT_JSX_END'
+          echo 'ARZDESK_FORMAT_CSS_BEGIN'
+          base64 -w0 src/app/offline/offline.css
+          echo
+          echo 'ARZDESK_FORMAT_CSS_END'
+          echo 'ARZDESK_FORMAT_TEST_BEGIN'
+          base64 -w0 tests/e2e/offline-home.spec.ts
+          echo
+          echo 'ARZDESK_FORMAT_TEST_END'
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -45,6 +72,8 @@ jobs:
       - run: env -u BETTER_AUTH_SECRET -u BETTER_AUTH_URL npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+        env:
+          ARZDESK_CAPTURE_OFFLINE: "1"
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
