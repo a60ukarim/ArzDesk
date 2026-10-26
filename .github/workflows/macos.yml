@@ -1,0 +1,73 @@
+name: macOS installer
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "desktop/**"
+      - "scripts/prepare-desktop.mjs"
+      - "scripts/installer-report.mjs"
+      - "src/**"
+      - "package-lock.json"
+      - ".github/workflows/macos.yml"
+permissions:
+  contents: read
+jobs:
+  build-mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: macos-15-intel
+          - arch: arm64
+            runner: macos-15
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      ARZDESK_EXPECTED_ARCH: ${{ matrix.arch }}
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/prepare-desktop.mjs
+      - run: npm ci --prefix desktop --no-audit --no-fund
+      - run: node desktop/node_modules/electron/install.js
+      - run: npm exec -- electron-builder --mac dmg --${{ matrix.arch }}
+        working-directory: desktop
+      - name: Mount DMG and test packaged app on its native architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          dmg=(dist-windows/ArzDesk-*-mac-${{ matrix.arch }}.dmg)
+          hdiutil verify "${dmg[0]}"
+          mount="$RUNNER_TEMP/arzdesk-dmg"
+          mkdir -p "$mount"
+          hdiutil attach "${dmg[0]}" -mountpoint "$mount" -nobrowse -readonly
+          trap 'hdiutil detach "$mount"' EXIT
+          installed="$RUNNER_TEMP/arzdesk-installed"
+          mkdir -p "$installed"
+          ditto "$mount/ArzDesk.app" "$installed/ArzDesk.app"
+          lipo "$installed/ArzDesk.app/Contents/MacOS/ArzDesk" -verify_arch ${{ matrix.arch == 'x64' && 'x86_64' || 'arm64' }}
+          export ARZDESK_SMOKE_PROFILE="$RUNNER_TEMP/arzdesk-qa-installed-${{ matrix.arch }}"
+          for phase in write read; do
+            export ARZDESK_SMOKE_PHASE="$phase"
+            "$installed/ArzDesk.app/Contents/MacOS/ArzDesk" --smoke-test
+          done
+          node scripts/installer-report.mjs dist-windows mac-${{ matrix.arch }}
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ArzDesk-macOS-QA-${{ matrix.arch }}
+          path: |
+            dist-windows/ArzDesk-*-mac-${{ matrix.arch }}.dmg
+            dist-windows/installer-report-mac-${{ matrix.arch }}.json
+            dist-windows/SHA256SUMS-mac-${{ matrix.arch }}.txt
+          if-no-files-found: error
+          retention-days: 30
