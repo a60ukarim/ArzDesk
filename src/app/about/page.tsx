@@ -87,7 +87,7 @@ export default function AboutPage() {
           </a>
           <Link
             href="/install"
-            className="rounded-lg bg-[#181818] px-4 py-3 text-xs font-bold text-white hover:bg-neutral-700"
+            className="launch-cta launch-cta--dark rounded-lg bg-[#181818] px-4 py-3 text-xs font-bold text-white hover:bg-neutral-700"
           >
             Install ArzDesk
           </Link>
@@ -122,13 +122,13 @@ export default function AboutPage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/offline"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-extrabold text-black hover:bg-neutral-200"
+                  className="launch-cta launch-cta--light inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-extrabold text-black hover:bg-neutral-200"
                 >
                   Start free <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/install"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/35 px-5 py-3 text-xs font-extrabold text-white hover:bg-white/10"
+                  className="launch-cta launch-cta--hero-outline inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/35 px-5 py-3 text-xs font-extrabold text-white hover:bg-white/10"
                 >
                   <Download size={16} /> Install on your device
                 </Link>
@@ -296,7 +296,7 @@ export default function AboutPage() {
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <Link
             href="/install"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#181818] px-6 py-4 text-xs font-extrabold text-white hover:bg-neutral-700"
+            className="launch-cta launch-cta--dark inline-flex items-center gap-2 rounded-xl bg-[#181818] px-6 py-4 text-xs font-extrabold text-white hover:bg-neutral-700"
           >
             See installation steps <ArrowRight size={16} />
           </Link>
@@ -304,7 +304,7 @@ export default function AboutPage() {
             href="https://github.com/a60ukarim/ArzDesk"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-6 py-4 text-xs font-extrabold hover:bg-neutral-200"
+            className="launch-cta launch-cta--outline inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-6 py-4 text-xs font-extrabold hover:bg-neutral-200"
           >
             Explore the source <ArrowUpRight size={16} />
           </a>
