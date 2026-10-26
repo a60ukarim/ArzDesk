@@ -146,5 +146,5 @@ test("owner can quickly rename online workspace without changing its URL", async
   await page.reload();
   await expect(page.locator(".org-card")).toContainText("Studio");
   await page.locator(".org-card").click();
-));
+  await expect(page).toHaveURL(new RegExp("/w/" + workspaceId + "(?:/overview)?$"));
 });
