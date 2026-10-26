@@ -61,6 +61,8 @@ export function OfflineApp() {
     }
   }
   useEffect(() => {
+    // Electron ships all offline assets; no service worker or network setup is needed.
+    if (window.location.protocol === "arzdesk:") setReady(true);
     void deviceTransaction().then(setState, (error) =>
       setError(
         error instanceof Error
