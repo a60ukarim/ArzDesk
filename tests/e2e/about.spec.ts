@@ -9,11 +9,36 @@ test("public product page has readable calls to action and fits mobile", async (
   ).toBeVisible();
 
   const buttons = [
-    { label: "Install ArzDesk", href: "/install", color: "rgb(255, 255, 255)", background: "rgb(24, 24, 24)" },
-    { label: "Start free", href: "/offline", color: "rgb(24, 24, 24)", background: "rgb(255, 255, 255)" },
-    { label: "Install on your device", href: "/install", color: "rgb(255, 255, 255)", background: "rgba(0, 0, 0, 0)" },
-    { label: "See installation steps", href: "/install", color: "rgb(255, 255, 255)", background: "rgb(24, 24, 24)" },
-    { label: "Explore the source", href: "https://github.com/a60ukarim/ArzDesk", color: "rgb(24, 24, 24)", background: "rgba(0, 0, 0, 0)" },
+    {
+      label: "Install ArzDesk",
+      href: "/install",
+      color: "rgb(255, 255, 255)",
+      background: "rgb(24, 24, 24)",
+    },
+    {
+      label: "Start free",
+      href: "/offline",
+      color: "rgb(24, 24, 24)",
+      background: "rgb(255, 255, 255)",
+    },
+    {
+      label: "Install on your device",
+      href: "/install",
+      color: "rgb(255, 255, 255)",
+      background: "rgba(0, 0, 0, 0)",
+    },
+    {
+      label: "See installation steps",
+      href: "/install",
+      color: "rgb(255, 255, 255)",
+      background: "rgb(24, 24, 24)",
+    },
+    {
+      label: "Explore the source",
+      href: "https://github.com/a60ukarim/ArzDesk",
+      color: "rgb(24, 24, 24)",
+      background: "rgba(0, 0, 0, 0)",
+    },
   ];
 
   const robots = await page
@@ -37,7 +62,10 @@ test("public product page has readable calls to action and fits mobile", async (
       ).toBe(true);
 
       for (const button of buttons) {
-        const locator = page.getByRole("link", { name: button.label, exact: true });
+        const locator = page.getByRole("link", {
+          name: button.label,
+          exact: true,
+        });
         await expect(locator).toBeVisible();
         await expect(locator).toHaveAttribute("href", button.href);
         const actual = await locator.evaluate((element) => {
@@ -50,8 +78,14 @@ test("public product page has readable calls to action and fits mobile", async (
             height: rect.height,
           };
         });
-        expect(actual.color, `Text contrast: ${button.label} at ${width}px in ${theme}`).toBe(button.color);
-        expect(actual.background, `Background: ${button.label} at ${width}px in ${theme}`).toBe(button.background);
+        expect(
+          actual.color,
+          `Text contrast: ${button.label} at ${width}px in ${theme}`,
+        ).toBe(button.color);
+        expect(
+          actual.background,
+          `Background: ${button.label} at ${width}px in ${theme}`,
+        ).toBe(button.background);
         expect(actual.width).toBeGreaterThan(35);
         expect(actual.height).toBeGreaterThan(30);
       }
