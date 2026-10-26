@@ -41,7 +41,8 @@ jobs:
         env:
           TEST_DATABASE_URL: postgresql://arzdesk:arzdesk@localhost:5432/arzdesk
       - run: npm run db:migrate
-      - run: npm run build
+      # Production builds must not require runtime-only authentication credentials.
+      - run: env -u BETTER_AUTH_SECRET -u BETTER_AUTH_URL npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v6
