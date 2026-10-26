@@ -61,6 +61,19 @@ test("public product page has readable calls to action and fits mobile", async (
           body: await page.screenshot({ fullPage: true }),
           contentType: "image/png",
         });
+        if (process.env.ARZDESK_CAPTURE_LAUNCH === "1") {
+          const jpeg = await page.screenshot({
+            fullPage: true,
+            type: "jpeg",
+            quality: 65,
+          });
+          const encoded = jpeg.toString("base64");
+          console.log("ARZDESK_VISUAL_BEGIN");
+          for (let i = 0; i < encoded.length; i += 3500) {
+            console.log("ARZDESK_VISUAL_PART=" + encoded.slice(i, i + 3500));
+          }
+          console.log("ARZDESK_VISUAL_END");
+        }
       }
       if (width === 1366 && theme === "light") {
         await testInfo.attach("public-landing-desktop.png", {
