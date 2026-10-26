@@ -124,7 +124,7 @@ export default function AboutPage() {
                   href="/offline"
                   className="launch-cta launch-cta--light inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-extrabold text-black hover:bg-neutral-200"
                 >
-                  Start free <ArrowRight size={16} />
+                  Open ArzDesk <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/install"
@@ -228,7 +228,7 @@ export default function AboutPage() {
             {[
               [
                 "Open ArzDesk",
-                "Choose Start free to open device mode. No account is needed.",
+                "Choose Open ArzDesk to open device mode. No account is needed.",
               ],
               [
                 "Wait for offline readiness",

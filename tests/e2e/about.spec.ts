@@ -16,7 +16,7 @@ test("public product page has readable calls to action and fits mobile", async (
       background: "rgb(24, 24, 24)",
     },
     {
-      label: "Start free",
+      label: "Open ArzDesk",
       href: "/offline",
       color: "rgb(24, 24, 24)",
       background: "rgb(255, 255, 255)",
