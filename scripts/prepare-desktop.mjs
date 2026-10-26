@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
 
 const cwd = process.cwd();
@@ -55,6 +55,8 @@ try {
   ) {
     throw Error("Missing offline UI or scripts in desktop HTML");
   }
+  // Only generated build output; never an installed application profile.
+  await rm(destination, { recursive: true, force: true });
   await mkdir(path.join(destination, "offline"), { recursive: true });
   await writeFile(
     path.join(destination, "offline", "index.html"),

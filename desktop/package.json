@@ -1,7 +1,7 @@
 {
   "name": "arzdesk-desktop",
-  "version": "0.7.0-beta.1",
-  "description": "ArzDesk offline application for Windows",
+  "version": "0.7.0-beta.2",
+  "description": "ArzDesk offline desktop application",
   "productName": "ArzDesk",
   "main": "main.cjs",
   "private": true,
@@ -23,7 +23,8 @@
     },
     "files": [
       "main.cjs",
-      "package.json"
+      "package.json",
+      "smoke.cjs"
     ],
     "extraResources": [
       {
@@ -47,7 +48,8 @@
       "allowToChangeInstallationDirectory": true,
       "perMachine": false,
       "createDesktopShortcut": true,
-      "shortcutName": "ArzDesk"
+      "shortcutName": "ArzDesk",
+      "deleteAppDataOnUninstall": false
     },
     "mac": {
       "target": [

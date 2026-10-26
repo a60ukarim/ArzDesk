@@ -1,4 +1,5 @@
 "use client";
+import { useClientReady } from "@/lib/use-client-ready";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { z } from "zod";
 import {
@@ -48,6 +49,8 @@ export function OfflineApp() {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const clientReady = useClientReady();
+  const desktopReady = clientReady && window.location.protocol === "arzdesk:";
   const [name, setName] = useState("");
   const channel = useRef<BroadcastChannel | null>(null);
   async function reload() {
@@ -61,8 +64,6 @@ export function OfflineApp() {
     }
   }
   useEffect(() => {
-    // Electron ships all offline assets; no service worker or network setup is needed.
-    if (window.location.protocol === "arzdesk:") setReady(true);
     void deviceTransaction().then(setState, (error) =>
       setError(
         error instanceof Error
@@ -81,6 +82,7 @@ export function OfflineApp() {
     let active = true;
     let timer: ReturnType<typeof setInterval> | undefined;
     if (
+      window.location.protocol !== "arzdesk:" &&
       "serviceWorker" in navigator &&
       "caches" in window &&
       process.env.NODE_ENV === "production"
@@ -246,37 +248,39 @@ export function OfflineApp() {
               <ShieldCheck size={16} />
               Protect device storage
             </Button>
-            <Button
-              variant="outline"
-              disabled={busy}
-              onClick={() =>
-                void run(async () => {
-                  const response = await fetch("/api/offline-export", {
-                    cache: "no-store",
-                  });
-                  if (response.status === 401)
-                    throw new Error(
-                      "Sign in to your online account first, then return here to copy its workspaces.",
+            {!desktopReady && (
+              <Button
+                variant="outline"
+                disabled={busy}
+                onClick={() =>
+                  void run(async () => {
+                    const response = await fetch("/api/offline-export", {
+                      cache: "no-store",
+                    });
+                    if (response.status === 401)
+                      throw new Error(
+                        "Sign in to your online account first, then return here to copy its workspaces.",
+                      );
+                    if (!response.ok)
+                      throw new Error(
+                        "Online workspaces could not be copied. Connect to the internet and try again.",
+                      );
+                    const incoming = await response.json();
+                    saved(
+                      await deviceTransaction((current) =>
+                        importLocalBackup(current, incoming),
+                      ),
                     );
-                  if (!response.ok)
-                    throw new Error(
-                      "Online workspaces could not be copied. Connect to the internet and try again.",
+                    setNotice(
+                      "Online workspaces copied to this device. Future changes are separate; automatic sync is not enabled.",
                     );
-                  const incoming = await response.json();
-                  saved(
-                    await deviceTransaction((current) =>
-                      importLocalBackup(current, incoming),
-                    ),
-                  );
-                  setNotice(
-                    "Online workspaces copied to this device. Future changes are separate; automatic sync is not enabled.",
-                  );
-                })
-              }
-            >
-              <Cloud size={16} />
-              Copy online workspaces
-            </Button>
+                  })
+                }
+              >
+                <Cloud size={16} />
+                Copy online workspaces
+              </Button>
+            )}
           </div>
         </details>
         <p className="local-backup-footnote">
@@ -293,7 +297,9 @@ export function OfflineApp() {
     <div className="local-status" aria-live="polite">
       <span className="local-status-state">
         <HardDrive size={16} aria-hidden="true" />
-        {ready ? "Ready for offline use" : "Preparing offline access…"}
+        {ready || desktopReady
+          ? "Ready for offline use"
+          : "Preparing offline access…"}
       </span>
       <span className="local-status-caption">Saved on this device</span>
       {!!state?.organizations.length && (

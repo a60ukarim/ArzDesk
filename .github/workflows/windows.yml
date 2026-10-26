@@ -5,20 +5,19 @@ on:
     paths:
       - "desktop/**"
       - "scripts/prepare-desktop.mjs"
-      - "src/features/offline/**"
-      - "src/components/app-registration.tsx"
-      - "src/app/download/**"
+      - "scripts/installer-report.mjs"
+      - "src/**"
+      - "package-lock.json"
       - ".github/workflows/windows.yml"
-
 permissions:
   contents: read
-
 jobs:
   build-windows:
     runs-on: windows-latest
     timeout-minutes: 45
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      ARZDESK_EXPECTED_ARCH: x64
     steps:
       - uses: actions/checkout@v6
         with:
@@ -27,34 +26,38 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Install web dependencies
-        run: npm ci
-      - name: Build Next.js website for bundling
-        run: npm run build
-      - name: Create standalone offline bundle
-        run: node scripts/prepare-desktop.mjs
-      - name: Install pinned Electron dependencies
-        run: npm install --prefix desktop --no-audit --no-fund
-      - name: Launch bundled offline app and verify hydration
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/prepare-desktop.mjs
+      - run: npm ci --prefix desktop --no-audit --no-fund
+      - run: node desktop/node_modules/electron/install.js
+      - run: npm run dist:win --prefix desktop
+      - name: Install EXE, verify offline work and persistence, then uninstall
         shell: pwsh
         run: |
-          & ".\\desktop\\node_modules\\.bin\\electron.cmd" ".\\desktop\\main.cjs" --smoke-test
-          if ($LASTEXITCODE -ne 0) { throw "Desktop smoke test failed: $LASTEXITCODE" }
-      - name: Build NSIS Windows installer
-        run: npm run dist:win --prefix desktop
-      - name: Verify executable and SHA-256
-        shell: pwsh
-        run: |
-          $files = @(Get-ChildItem -Path "dist-windows" -Filter "ArzDesk-Setup-*.exe")
-          if ($files.Count -ne 1) { throw "Expected exactly one NSIS installer" }
-          foreach ($file in $files) {
-            if ($file.Length -lt 10000000) { throw "Installer unexpectedly small" }
-            Get-FileHash -Algorithm SHA256 $file.FullName | Format-List
+          $ErrorActionPreference = 'Stop'
+          $files = @(Get-ChildItem dist-windows/ArzDesk-Setup-*.exe)
+          if ($files.Count -ne 1) { throw 'Expected exactly one installer' }
+          $target = Join-Path $env:RUNNER_TEMP 'arzdesk-installed'
+          $install = Start-Process -FilePath $files[0].FullName -ArgumentList @('/S', "/D=$target") -PassThru -Wait
+          if ($install.ExitCode -ne 0) { throw "NSIS install failed: $($install.ExitCode)" }
+          $env:ARZDESK_SMOKE_PROFILE = Join-Path $env:RUNNER_TEMP "arzdesk-qa-installed-$env:GITHUB_RUN_ID"
+          foreach ($phase in @('write', 'read')) {
+            $env:ARZDESK_SMOKE_PHASE = $phase
+            $process = Start-Process -FilePath "$target/ArzDesk.exe" -ArgumentList '--smoke-test' -PassThru -Wait -RedirectStandardOutput "$env:RUNNER_TEMP/smoke-$phase.log" -RedirectStandardError "$env:RUNNER_TEMP/smoke-$phase.err"
+            Get-Content "$env:RUNNER_TEMP/smoke-$phase.log"
+            Get-Content "$env:RUNNER_TEMP/smoke-$phase.err"
+            if ($process.ExitCode -ne 0) { throw "Installed app failed $phase smoke test: $($process.ExitCode)" }
           }
-      - name: Save verified Windows installer
-        uses: actions/upload-artifact@v6
+          $uninstall = Start-Process -FilePath "$target/Uninstall ArzDesk.exe" -ArgumentList '/S' -PassThru -Wait
+          if ($uninstall.ExitCode -ne 0) { throw 'NSIS uninstall failed' }
+          node scripts/installer-report.mjs dist-windows windows
+      - uses: actions/upload-artifact@v6
         with:
-          name: ArzDesk-Windows-Installer
-          path: dist-windows/ArzDesk-Setup-*.exe
+          name: ArzDesk-Windows-Installer-QA
+          path: |
+            dist-windows/ArzDesk-Setup-*.exe
+            dist-windows/installer-report-windows.json
+            dist-windows/SHA256SUMS-windows.txt
           if-no-files-found: error
           retention-days: 30

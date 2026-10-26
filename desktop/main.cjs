@@ -18,6 +18,24 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 app.setName("ArzDesk");
+const smokeMode = process.argv.includes("--smoke-test");
+if (smokeMode) {
+  if (
+    process.env.ARZDESK_EXPECTED_ARCH &&
+    process.arch !== process.env.ARZDESK_EXPECTED_ARCH
+  )
+    throw Error("Wrong packaged architecture");
+  const profile = process.env.ARZDESK_SMOKE_PROFILE;
+  if (
+    !profile ||
+    !path.isAbsolute(profile) ||
+    !path.basename(profile).startsWith("arzdesk-qa-")
+  )
+    throw Error("Desktop smoke tests require an isolated arzdesk-qa-* profile");
+  require("node:fs").mkdirSync(profile, { recursive: true });
+  app.setPath("userData", profile);
+}
+
 if (process.platform === "win32") app.setAppUserModelId("com.arzcore.arzdesk");
 
 const folder = app.isPackaged
@@ -90,6 +108,19 @@ async function boot() {
       devTools: !app.isPackaged,
     },
   });
+  const outbound = [];
+  window.webContents.session.setPermissionRequestHandler(
+    (_webContents, _permission, callback) => callback(false),
+  );
+  window.webContents.session.setPermissionCheckHandler(() => false);
+  if (smokeMode)
+    window.webContents.session.webRequest.onBeforeRequest(
+      { urls: ["https://*/*", "http://*/*"] },
+      (details, callback) => {
+        outbound.push(details.url);
+        callback({ cancel: true });
+      },
+    );
   window.once("ready-to-show", () => window.show());
   window.webContents.setWindowOpenHandler(({ url }) => {
     void external(url);
@@ -117,27 +148,14 @@ async function boot() {
     console.error("DESKTOP_LOAD_FAILED", code, desc, target),
   );
   await window.loadURL(HOME);
-  if (process.argv.includes("--smoke-test")) {
+  if (smokeMode) {
     try {
-      let ok = false;
-      const deadline = Date.now() + 25000;
-      while (!ok && Date.now() < deadline) {
-        ok = await window.webContents.executeJavaScript(
-          'Boolean(document.querySelector(".local-home") && document.querySelector("input") && window.indexedDB)',
-          true,
+      await require("./smoke.cjs")(window, process.env.ARZDESK_SMOKE_PROFILE);
+      if (outbound.length)
+        throw Error(
+          "Desktop attempted network requests: " + outbound.join(", "),
         );
-        if (!ok) await new Promise((resolve) => setTimeout(resolve, 300));
-      }
-      if (!ok) {
-        const diagnostic = await window.webContents.executeJavaScript(
-          '({url:location.href,html:document.body.innerText.slice(0,400),hasPage:!!document.querySelector(".local-home"),inputCount:document.querySelectorAll("input").length})',
-        );
-        console.log("ARZDESK_DESKTOP_DOM", JSON.stringify(diagnostic));
-      }
-      console.log(
-        ok ? "ARZDESK_DESKTOP_SMOKE_OK" : "ARZDESK_DESKTOP_SMOKE_FAILED",
-      );
-      app.exit(ok ? 0 : 1);
+      app.exit(0);
     } catch (error) {
       console.error(error);
       app.exit(1);
@@ -157,6 +175,8 @@ app.whenReady().then(async () => {
             types[path.extname(file).toLowerCase()] ||
             "application/octet-stream",
           "x-content-type-options": "nosniff",
+          "content-security-policy":
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'",
         },
       });
     } catch (error) {

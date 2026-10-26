@@ -2,93 +2,177 @@ import "./download.css";
 import Link from "next/link";
 import {
   ArrowLeft,
+  Apple,
   Download,
   HardDrive,
+  Laptop,
   MonitorDown,
   ShieldCheck,
+  Smartphone,
   WifiOff,
 } from "lucide-react";
+import { getApprovedRelease } from "@/lib/desktop-releases";
 import { Brand } from "@/components/brand";
 
 export const metadata = {
-  title: "Download for Windows",
+  title: "Download ArzDesk for Windows, Mac, Android and iPhone",
   description:
-    "Install ArzDesk on Windows and work offline on your own device.",
+    "Get ArzDesk on Windows, macOS, Android, iPhone or iPad. Local work can run offline after initial setup.",
 };
 
 export const dynamic = "force-dynamic";
 
 export default function DownloadPage() {
-  const installer = process.env.ARZDESK_WINDOWS_DOWNLOAD_URL;
-  let downloadUrl: string | null = null;
-  try {
-    if (installer) {
-      const parsed = new URL(installer);
-      if (parsed.protocol === "https:") downloadUrl = parsed.toString();
-    }
-  } catch {
-    // Never publish a broken or unverified download action.
-  }
-
+  const windowsRelease = getApprovedRelease("windows");
+  const macArmRelease = getApprovedRelease("mac-arm64");
+  const macIntelRelease = getApprovedRelease("mac-intel");
+  const windows = windowsRelease?.downloadPath;
+  const macArm = macArmRelease?.downloadPath;
+  const macIntel = macIntelRelease?.downloadPath;
   return (
     <main className="download-page">
       <div className="download-container">
         <header className="download-header">
           <Brand />
           <Link href="/about">
-            <ArrowLeft size={15} /> About ArzDesk
+            <ArrowLeft size={15} aria-hidden="true" />
+            About ArzDesk
           </Link>
         </header>
+
         <section className="download-hero">
-          <span className="download-eyebrow">WINDOWS DESKTOP APPLICATION</span>
-          <h1>ArzDesk. Now on your desktop.</h1>
+          <span className="download-eyebrow">ARZDESK · ALL YOUR DEVICES</span>
+          <h1>Your workspace. Wherever you are.</h1>
           <p>
-            Keep clients, projects and tasks organized in a standalone Windows
-            app — no browser tab or internet connection needed for local work.
+            Choose your device to get started. Keep local work on your device,
+            even when the internet is unavailable after setup.
           </p>
-          <div className="download-cta">
-            {downloadUrl ? (
-              <a href={downloadUrl} className="download-windows-button">
-                <Download size={21} /> Download for Windows (.exe)
+        </section>
+
+        <section className="download-platform-grid" aria-label="Get ArzDesk">
+          <article className="download-platform">
+            <div className="download-platform-top">
+              <Laptop size={25} aria-hidden="true" />
+              <span>Windows 10 &amp; 11 · 64-bit</span>
+            </div>
+            <h2>Windows</h2>
+            <p>
+              A dedicated desktop application with local, offline workspaces.
+            </p>
+            {windows ? (
+              <a className="download-platform-primary" href={windows}>
+                <Download size={18} aria-hidden="true" />
+                Download .exe
               </a>
             ) : (
-              <div className="download-unavailable" role="status">
-                <MonitorDown size={20} /> Windows installer is in final testing
+              <div className="download-platform-pending" role="status">
+                <MonitorDown size={17} aria-hidden="true" />
+                Windows installer in testing
               </div>
             )}
-            <span>Free and open source · Windows 10/11 · 64-bit</span>
+          </article>
+
+          <article className="download-platform">
+            <div className="download-platform-top">
+              <Apple size={25} aria-hidden="true" />
+              <span>macOS · Apple Silicon / Intel</span>
+            </div>
+            <h2>MacBook &amp; Mac</h2>
+            <p>
+              A desktop version for both modern Apple Silicon and Intel Macs.
+            </p>
+            {macArm || macIntel ? (
+              <div className="download-platform-options">
+                {macArm && (
+                  <a className="download-platform-primary" href={macArm}>
+                    <Download size={17} aria-hidden="true" />
+                    Apple Silicon .dmg
+                  </a>
+                )}
+                {macIntel && (
+                  <a className="download-platform-secondary" href={macIntel}>
+                    <Download size={17} aria-hidden="true" />
+                    Intel .dmg
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="download-platform-pending" role="status">
+                <MonitorDown size={17} aria-hidden="true" />
+                Mac installers in testing
+              </div>
+            )}
+          </article>
+
+          <article className="download-platform">
+            <div className="download-platform-top">
+              <Smartphone size={25} aria-hidden="true" />
+              <span>Android · Phones &amp; tablets</span>
+            </div>
+            <h2>Android</h2>
+            <p>
+              Install the web app on your home screen now. Native APK support is
+              planned.
+            </p>
+            <Link
+              className="download-platform-primary"
+              href="/install#installation-steps"
+            >
+              <Download size={17} aria-hidden="true" />
+              Install on Android (PWA)
+            </Link>
+          </article>
+
+          <article className="download-platform">
+            <div className="download-platform-top">
+              <Apple size={25} aria-hidden="true" />
+              <span>iOS · iPhone &amp; iPad</span>
+            </div>
+            <h2>iPhone &amp; iPad</h2>
+            <p>
+              Use Safari’s Add to Home Screen option. A native App Store release
+              is not available yet.
+            </p>
+            <Link
+              className="download-platform-primary"
+              href="/install#installation-steps"
+            >
+              <Download size={17} aria-hidden="true" />
+              Install on iPhone (PWA)
+            </Link>
+          </article>
+        </section>
+
+        <section className="download-details" aria-label="Before you install">
+          <div>
+            <WifiOff size={22} aria-hidden="true" />
+            <h2>Works offline</h2>
+            <p>
+              Desktop apps include local app files. Phone PWAs need one online
+              visit to prepare offline access.
+            </p>
+          </div>
+          <div>
+            <HardDrive size={22} aria-hidden="true" />
+            <h2>Stored on each device</h2>
+            <p>
+              Phone, browser and desktop workspaces are separate. Export and
+              import a backup to move local work.
+            </p>
+          </div>
+          <div>
+            <ShieldCheck size={22} aria-hidden="true" />
+            <h2>Direct downloads</h2>
+            <p>
+              Verified installer downloads will be available here after testing.
+            </p>
           </div>
         </section>
-        <section className="download-features" aria-label="Desktop features">
-          <article>
-            <WifiOff size={22} />
-            <h2>Truly offline</h2>
-            <p>
-              The app interface is included with the installer, so it can launch
-              and work without a connection.
-            </p>
-          </article>
-          <article>
-            <HardDrive size={22} />
-            <h2>Stored on this PC</h2>
-            <p>
-              Workspaces are saved in the app&apos;s local storage. Export
-              backups regularly.
-            </p>
-          </article>
-          <article>
-            <ShieldCheck size={22} />
-            <h2>Separate from the browser</h2>
-            <p>
-              Already using our web app? Export your backup there, then import
-              it into the desktop app.
-            </p>
-          </article>
-        </section>
+
         <p className="download-note">
-          Important: Windows may warn when opening a new, unsigned app. Never
-          bypass an unexpected warning without checking the publisher and
-          download source.
+          Windows and macOS installers are undergoing testing. On iPhone and
+          Android, the installable PWA is available now. Desktop installers may
+          require publisher signing before wide distribution.
         </p>
         <footer>ArzDesk — Built by ArzCore Technologies</footer>
       </div>

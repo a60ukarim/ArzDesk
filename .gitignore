@@ -13,3 +13,6 @@ next-env.d.ts
 playwright.local.config.ts
 
 /public/offline-assets.js
+
+desktop/bundle/
+dist-windows/

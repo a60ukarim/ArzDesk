@@ -86,7 +86,7 @@ export default function AboutPage() {
             Open source <ArrowUpRight size={13} className="inline-block" />
           </a>
           <Link
-            href="/install"
+            href="/download"
             className="launch-cta launch-cta--dark rounded-lg bg-[#181818] px-4 py-3 text-xs font-bold text-white hover:bg-neutral-700"
           >
             Install ArzDesk
@@ -127,7 +127,7 @@ export default function AboutPage() {
                   Open ArzDesk <ArrowRight size={16} />
                 </Link>
                 <Link
-                  href="/install"
+                  href="/download"
                   className="launch-cta launch-cta--hero-outline inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/35 px-5 py-3 text-xs font-extrabold text-white hover:bg-white/10"
                 >
                   <Download size={16} /> Install on your device
@@ -295,7 +295,7 @@ export default function AboutPage() {
         </div>
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <Link
-            href="/install"
+            href="/download"
             className="launch-cta launch-cta--dark inline-flex items-center gap-2 rounded-xl bg-[#181818] px-6 py-4 text-xs font-extrabold text-white hover:bg-neutral-700"
           >
             See installation steps <ArrowRight size={16} />
