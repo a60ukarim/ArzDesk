@@ -17,6 +17,7 @@ export default async function Page() {
         <Brand />
         <div className="workspace-account">
           <ThemeSwitcher />
+          <NotificationBell />
           <AccountMenu person={{ name: user.name, email: user.email }} />
         </div>
       </header>
