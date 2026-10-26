@@ -80,21 +80,6 @@ test("offline landing stays compact, readable and usable on phones", async ({
           body: await page.screenshot({ fullPage: true }),
           contentType: "image/png",
         });
-        if (process.env.ARZDESK_CAPTURE_OFFLINE === "1") {
-          const jpeg = await page.screenshot({
-            fullPage: true,
-            type: "jpeg",
-            quality: 66,
-          });
-          const encoded = jpeg.toString("base64");
-          console.log("ARZDESK_OFFLINE_VISUAL_BEGIN");
-          for (let i = 0; i < encoded.length; i += 3500) {
-            console.log(
-              "ARZDESK_OFFLINE_VISUAL_PART=" + encoded.slice(i, i + 3500),
-            );
-          }
-          console.log("ARZDESK_OFFLINE_VISUAL_END");
-        }
       }
     }
   }
