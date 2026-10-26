@@ -6,34 +6,6 @@ on:
 permissions:
   contents: read
 jobs:
-  format-review:
-    if: github.event_name == 'pull_request' && github.head_ref == 'feat/quick-workspace-rename'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - name: Format and inspect modified files
-        run: |
-          npx prettier --write src/features/workspace/workspace-rename-control.tsx src/app/workspaces/page.tsx src/features/offline/offline-app.tsx src/app/globals.css tests/e2e/workspace-rename.spec.ts
-          for spec in F0 F1 F2 F3 F4; do
-            case "$spec" in
-              F0) file=src/features/workspace/workspace-rename-control.tsx ;;
-              F1) file=src/app/workspaces/page.tsx ;;
-              F2) file=src/features/offline/offline-app.tsx ;;
-              F3) file=src/app/globals.css ;;
-              F4) file=tests/e2e/workspace-rename.spec.ts ;;
-            esac
-            echo "ARZDESK_QUICK_${spec}_BEGIN"
-            base64 -w0 "$file"
-            echo
-            echo "ARZDESK_QUICK_${spec}_END"
-          done
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
