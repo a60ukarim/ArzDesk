@@ -19,9 +19,14 @@ export function WorkspaceDangerZone({
   const { mutate, router, local } = useWorkspaceRuntime();
 
   return (
-    <section className="panel settings-card workspace-danger" aria-labelledby="workspace-danger-title">
+    <section
+      className="panel settings-card workspace-danger"
+      aria-labelledby="workspace-danger-title"
+    >
       <div className="settings-card-heading">
-        <span className="entity-icon"><AlertTriangle size={19} /></span>
+        <span className="entity-icon">
+          <AlertTriangle size={19} />
+        </span>
         <div>
           <h2 id="workspace-danger-title">Delete workspace</h2>
           <p>Remove this workspace and everything inside it.</p>
@@ -29,33 +34,45 @@ export function WorkspaceDangerZone({
       </div>
       <p className="settings-description">
         This permanently deletes the workspace, its clients, projects and tasks.
-        {local ? " Only this device's copy is affected." :
-          " All team members will lose access. This cannot be undone."}
+        {local
+          ? " Only this device's copy is affected."
+          : " All team members will lose access. This cannot be undone."}
       </p>
       {!expanded ? (
-        <Button type="button" variant="destructive" onClick={() => setExpanded(true)}>
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={() => setExpanded(true)}
+        >
           <Trash2 size={15} /> Delete workspace…
         </Button>
       ) : (
-        <form className="workspace-delete-form" onSubmit={async (e) => {
-          e.preventDefault();
-          if (confirmation !== name || busy) return;
-          setBusy(true);
-          setError("");
-          try {
-            const result = await mutate("organization.delete", orgId, { confirmation });
-            if (!result.ok) {
-              setError(result.error);
-              return;
+        <form
+          className="workspace-delete-form"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (confirmation !== name || busy) return;
+            setBusy(true);
+            setError("");
+            try {
+              const result = await mutate("organization.delete", orgId, {
+                confirmation,
+              });
+              if (!result.ok) {
+                setError(result.error);
+                return;
+              }
+              router.push(local ? "/offline#" : "/workspaces");
+              if (!local) router.refresh();
+            } catch {
+              setError(
+                "Could not delete this workspace. No changes were made.",
+              );
+            } finally {
+              setBusy(false);
             }
-            router.push(local ? "/offline#" : "/workspaces");
-            if (!local) router.refresh();
-          } catch {
-            setError("Could not delete this workspace. No changes were made.");
-          } finally {
-            setBusy(false);
-          }
-        }}>
+          }}
+        >
           <p className="workspace-danger-warning">
             This action cannot be undone. Export a backup first if you need
             these records later.
@@ -70,7 +87,11 @@ export function WorkspaceDangerZone({
               required
             />
           </label>
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
           <div className="workspace-danger-actions">
             <Button
               type="button"
@@ -81,8 +102,14 @@ export function WorkspaceDangerZone({
                 setConfirmation("");
                 setError("");
               }}
-            >Cancel</Button>
-            <Button type="submit" variant="destructive" disabled={busy || confirmation !== name}>
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="destructive"
+              disabled={busy || confirmation !== name}
+            >
               <Trash2 size={15} /> {busy ? "Deleting…" : "Delete permanently"}
             </Button>
           </div>
