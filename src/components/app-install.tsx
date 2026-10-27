@@ -11,6 +11,9 @@ import {
 } from "@/lib/app-install-state";
 function installed() {
   return (
+    /\bElectron\/\d/i.test(navigator.userAgent) ||
+    (window.location.protocol === "arzdesk:" &&
+      window.location.hostname === "local") ||
     window.matchMedia("(display-mode: standalone)").matches ||
     !!(navigator as Navigator & { standalone?: boolean }).standalone
   );
@@ -37,6 +40,23 @@ export function AppInstall() {
     ready &&
     (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+  // An installed desktop window is not a phone and does not use PWA display mode.
+  // This is a presentation hint only; authentication never depends on it.
+  if (isInstalled)
+    return (
+      <>
+        <p role="status" className="install-success">
+          <CheckCircle2 size={19} aria-hidden="true" />
+          ArzDesk is installed on this device.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="/offline">
+            Open workspace
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </Button>
+      </>
+    );
   if (!mobile)
     return (
       <>
@@ -58,12 +78,7 @@ export function AppInstall() {
     );
   return (
     <>
-      {isInstalled ? (
-        <p className="install-success">
-          <CheckCircle2 size={19} />
-          ArzDesk is installed on this device.
-        </p>
-      ) : prompt ? (
+      {prompt ? (
         <Button
           onClick={async () => {
             try {

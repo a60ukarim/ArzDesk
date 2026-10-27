@@ -102,3 +102,48 @@ test("private account pages are never cached and offline navigation opens device
     page.getByRole("heading", { name: "Your work. Even offline." }),
   ).toBeVisible();
 });
+
+for (const desktop of ["electron", "standalone"] as const) {
+  test(`installed ${desktop} desktop shows installed status instead of download prompt`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({
+      userAgent:
+        desktop === "electron"
+          ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ArzDesk/1.0.0 Chrome/144.0.0.0 Electron/44.9.3 Safari/537.36"
+          : undefined,
+    });
+    try {
+      if (desktop === "standalone")
+        await context.addInitScript(() => {
+          const match = window.matchMedia.bind(window);
+          window.matchMedia = (query) =>
+            query === "(display-mode: standalone)"
+              ? Object.defineProperty(match(query), "matches", { value: true })
+              : match(query);
+        });
+      const page = await context.newPage();
+      await page.goto("/install");
+      await expect(
+        page
+          .getByRole("status")
+          .filter({ hasText: "ArzDesk is installed on this device." }),
+      ).toHaveText("ArzDesk is installed on this device.");
+      await expect(
+        page.getByRole("link", { name: "Get the desktop app", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("link", { name: "Continue in browser", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("link", { name: "Open workspace", exact: true }),
+      ).toHaveAttribute("href", "/offline");
+      await page
+        .getByRole("link", { name: "Open workspace", exact: true })
+        .click();
+      await expect(page).toHaveURL(/\/offline$/);
+    } finally {
+      await context.close();
+    }
+  });
+}
