@@ -124,9 +124,11 @@ for (const desktop of ["electron", "standalone"] as const) {
         });
       const page = await context.newPage();
       await page.goto("/install");
-      await expect(page.getByRole("status")).toHaveText(
-        "ArzDesk is installed on this device.",
-      );
+      await expect(
+        page
+          .getByRole("status")
+          .filter({ hasText: "ArzDesk is installed on this device." }),
+      ).toHaveText("ArzDesk is installed on this device.");
       await expect(
         page.getByRole("link", { name: "Get the desktop app", exact: true }),
       ).toHaveCount(0);
