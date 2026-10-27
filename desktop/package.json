@@ -1,6 +1,6 @@
 {
   "name": "arzdesk-desktop",
-  "version": "0.7.0-beta.2",
+  "version": "0.7.0-beta.3",
   "description": "ArzDesk offline desktop application",
   "productName": "ArzDesk",
   "main": "main.cjs",
@@ -41,7 +41,8 @@
           ]
         }
       ],
-      "artifactName": "ArzDesk-Setup-${version}-${arch}.${ext}"
+      "artifactName": "ArzDesk-Setup-${version}-${arch}.${ext}",
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -49,7 +50,9 @@
       "perMachine": false,
       "createDesktopShortcut": true,
       "shortcutName": "ArzDesk",
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
     },
     "mac": {
       "target": [
@@ -64,7 +67,11 @@
       "category": "public.app-category.productivity",
       "artifactName": "ArzDesk-${version}-mac-${arch}.${ext}",
       "hardenedRuntime": false,
-      "identity": null
+      "identity": null,
+      "icon": "build/icon.icns"
+    },
+    "dmg": {
+      "icon": "build/icon.icns"
     }
   }
 }
