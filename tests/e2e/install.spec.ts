@@ -119,7 +119,7 @@ for (const desktop of ["electron", "standalone"] as const) {
           const match = window.matchMedia.bind(window);
           window.matchMedia = (query) =>
             query === "(display-mode: standalone)"
-              ? Object.assign(match(query), { matches: true })
+              ? Object.defineProperty(match(query), "matches", { value: true })
               : match(query);
         });
       const page = await context.newPage();
