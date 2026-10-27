@@ -13,6 +13,7 @@ test("quick rename changes only one offline workspace and keeps its ID", async (
     await page
       .getByRole("button", { name: "Create workspace", exact: true })
       .click();
+    await expect(page).toHaveURL(/#.+\/overview$/);
     await page.goto("/offline");
   }
 

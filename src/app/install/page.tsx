@@ -22,17 +22,14 @@ export default function Page() {
         <span className="eyebrow">YOUR WORK. ONE TAP AWAY.</span>
         <h1>ArzDesk, on your device.</h1>
         <p>
-          Keep ArzDesk on your desktop or home screen. Work on this device
-          without internet, or sign in for shared online workspaces.
+          Get the standalone application for Windows or Mac, or add ArzDesk to
+          your phone’s home screen.
         </p>
         <div className="install-actions">
           <AppInstall />
-          <a className="btn btn-outline" href="/offline">
-            Open device workspace
-          </a>
         </div>
         <small>
-          Open the device workspace online once to prepare offline access.
+          Phone installations need one online visit to prepare offline access.
           Device work stays local; team accounts need internet.
         </small>
       </section>
@@ -45,10 +42,13 @@ export default function Page() {
           <Monitor />
           <h2>Windows &amp; Mac</h2>
           <p>
-            Open this address in Chrome or Edge. Use the install icon in the
-            address bar, or select <strong>Install ArzDesk</strong> from the
-            browser menu.
+            Visit the download page and choose the Windows EXE or the Mac DMG
+            for your device. Install it, then open ArzDesk from your desktop,
+            Start menu or Applications folder.
           </p>
+          <Link className="btn btn-outline" href="/download">
+            Desktop downloads
+          </Link>
         </article>
         <article>
           <Smartphone />
