@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getApprovedRelease } from "@/lib/desktop-releases";
 import { Brand } from "@/components/brand";
+import { PhoneDownloadInstall } from "@/components/phone-download-install";
 
 export const metadata = {
   title: "Download ArzDesk for Windows, Mac, Android and iPhone",
@@ -114,13 +115,7 @@ export default function DownloadPage() {
               Install the web app on your home screen now. Native APK support is
               planned.
             </p>
-            <Link
-              className="download-platform-primary"
-              href="/install#installation-steps"
-            >
-              <Download size={17} aria-hidden="true" />
-              Install on Android (PWA)
-            </Link>
+            <PhoneDownloadInstall platform="android" />
           </article>
 
           <article className="download-platform">
@@ -133,13 +128,7 @@ export default function DownloadPage() {
               Use Safari’s Add to Home Screen option. A native App Store release
               is not available yet.
             </p>
-            <Link
-              className="download-platform-primary"
-              href="/install#installation-steps"
-            >
-              <Download size={17} aria-hidden="true" />
-              Install on iPhone (PWA)
-            </Link>
+            <PhoneDownloadInstall platform="ios" />
           </article>
         </section>
 

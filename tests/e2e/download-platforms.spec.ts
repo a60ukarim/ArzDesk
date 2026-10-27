@@ -56,11 +56,14 @@ test("download hub shows mobile install routes and honest desktop status", async
       page.getByRole("heading", { name: "iPhone & iPad" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Install on Android (PWA)" }),
-    ).toHaveAttribute("href", "/install#installation-steps");
+      page.getByRole("button", { name: "Install on Android", exact: true }),
+    ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Install on iPhone (PWA)" }),
-    ).toHaveAttribute("href", "/install#installation-steps");
+      page.getByRole("button", {
+        name: "Install on iPhone & iPad",
+        exact: true,
+      }),
+    ).toBeVisible();
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(width);
@@ -125,6 +128,54 @@ for (const mobile of [false, true]) {
           page.getByRole("link", { name: "Download .exe", exact: true }),
         ).toBeVisible();
       }
+    } finally {
+      await context.close();
+    }
+  });
+}
+
+for (const outcome of ["accepted", "dismissed"] as const) {
+  test(`Android installs from download hub: ${outcome}`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({
+      userAgent:
+        "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36",
+    });
+    try {
+      const page = await context.newPage();
+      await page.goto("/download");
+      await expect(
+        page.getByRole("button", { name: "Install on Android", exact: true }),
+      ).toBeVisible();
+      await page.evaluate((outcome) => {
+        window.dispatchEvent(
+          Object.assign(new Event("beforeinstallprompt"), {
+            prompt: async () => {
+              document.documentElement.dataset.promptCalled = "yes";
+            },
+            userChoice: Promise.resolve({ outcome }),
+          }),
+        );
+      }, outcome);
+      await page
+        .getByRole("button", { name: "Install on Android", exact: true })
+        .click();
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-prompt-called",
+        "yes",
+      );
+      await expect(page.getByRole("status")).toContainText(
+        outcome === "accepted"
+          ? "Installation accepted"
+          : "Installation was cancelled",
+      );
+      await expect(page).toHaveURL(/\/download$/);
+      await page
+        .getByRole("button", { name: "Install on iPhone & iPad", exact: true })
+        .click();
+      await expect(page.locator("#install-ios-steps")).toContainText("Safari");
+      await expect(page).toHaveURL(/\/download$/);
     } finally {
       await context.close();
     }
