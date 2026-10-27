@@ -38,44 +38,50 @@ test("installation page uses the product logo and fits phones and computers", as
   }
 });
 
-test("install invitation survives navigation from sign in", async ({
-  page,
-}) => {
-  await page.goto("/sign-in");
-  await expect(
-    page.getByRole("button", { name: "Sign in", exact: true }),
-  ).toBeEnabled();
-  // A visible server-rendered form is not proof that root effects have mounted.
-  await page
-    .getByRole("button", { name: "Switch to dark mode", exact: true })
-    .click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  const captured = await page.evaluate(() => {
-    const event = new Event("beforeinstallprompt", { cancelable: true });
-    Object.assign(event, {
-      prompt: async () => {},
-      userChoice: Promise.resolve({ outcome: "accepted" }),
-    });
-    window.dispatchEvent(event);
-    return event.defaultPrevented;
+test.describe("phone browser installation", () => {
+  test.use({
+    userAgent:
+      "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36",
   });
-  expect(captured).toBe(true);
-  await page
-    .getByRole("link", { name: "Install ArzDesk", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/install$/);
-  await expect(
-    page.getByRole("button", { name: "Install ArzDesk", exact: true }),
-  ).toBeVisible({ timeout: 5000 });
-  await page
-    .getByRole("button", { name: "Install ArzDesk", exact: true })
-    .click();
-  await expect(
-    page.getByRole("status").filter({ hasText: "finish installing" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "How to install" }),
-  ).toBeVisible();
+  test("install invitation survives navigation from sign in", async ({
+    page,
+  }) => {
+    await page.goto("/sign-in");
+    await expect(
+      page.getByRole("button", { name: "Sign in", exact: true }),
+    ).toBeEnabled();
+    // A visible server-rendered form is not proof that root effects have mounted.
+    await page
+      .getByRole("button", { name: "Switch to dark mode", exact: true })
+      .click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    const captured = await page.evaluate(() => {
+      const event = new Event("beforeinstallprompt", { cancelable: true });
+      Object.assign(event, {
+        prompt: async () => {},
+        userChoice: Promise.resolve({ outcome: "accepted" }),
+      });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    });
+    expect(captured).toBe(true);
+    await page
+      .getByRole("link", { name: "Install ArzDesk", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/install$/);
+    await expect(
+      page.getByRole("button", { name: "Install ArzDesk", exact: true }),
+    ).toBeVisible({ timeout: 5000 });
+    await page
+      .getByRole("button", { name: "Install ArzDesk", exact: true })
+      .click();
+    await expect(
+      page.getByRole("status").filter({ hasText: "finish installing" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "How to install" }),
+    ).toBeVisible();
+  });
 });
 
 test("private account pages are never cached and offline navigation opens device work", async ({
