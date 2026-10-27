@@ -34,5 +34,5 @@ for (const platform of desktopPlatforms) {
 }
 if (!verified)
   throw Error(
-    "No physically approved installers are configured. Public downloads remain disabled.",
+    "No tested and approved installers are configured. Public downloads remain disabled.",
   );

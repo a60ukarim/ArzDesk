@@ -1,4 +1,77 @@
 {
   "schemaVersion": 1,
-  "releases": []
+  "releases": [
+    {
+      "platform": "windows",
+      "version": "1.0.0",
+      "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+      "fileName": "ArzDesk-Setup-1.0.0-x64.exe",
+      "sha256": "20ba71d3fb3f99b38b6765d8686f25b31c1fe0afb06122d57dc068df4d57757b",
+      "bytes": 121514031,
+      "physicalTests": [],
+      "automatedTest": {
+        "provider": "github-actions",
+        "runId": 40438038258,
+        "jobId": 121971384534,
+        "system": "windows-x64",
+        "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+        "testedAt": "2026-10-27T02:25:25Z",
+        "checks": {
+          "onlineAccountWindow": true,
+          "packagedLaunch": true,
+          "backupRoundTrip": true,
+          "restartPersistence": true,
+          "networkBlocked": true
+        }
+      }
+    },
+    {
+      "platform": "mac-intel",
+      "version": "1.0.0",
+      "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+      "fileName": "ArzDesk-1.0.0-mac-x64.dmg",
+      "sha256": "d5356c30aa96c06453514f84d22f7eaf0d8608bf106dcb7b20583ef855b36d8c",
+      "bytes": 135022826,
+      "physicalTests": [],
+      "automatedTest": {
+        "provider": "github-actions",
+        "runId": 40438038203,
+        "jobId": 121971384726,
+        "system": "macos-x64",
+        "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+        "testedAt": "2026-10-27T02:26:33Z",
+        "checks": {
+          "onlineAccountWindow": true,
+          "packagedLaunch": true,
+          "backupRoundTrip": true,
+          "restartPersistence": true,
+          "networkBlocked": true
+        }
+      }
+    },
+    {
+      "platform": "mac-arm64",
+      "version": "1.0.0",
+      "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+      "fileName": "ArzDesk-1.0.0-mac-arm64.dmg",
+      "sha256": "21c9e0e7fc0ecab3055aa14a3cd399e554ea609ee1b6f4bfb921af0f1ae4819f",
+      "bytes": 131235182,
+      "physicalTests": [],
+      "automatedTest": {
+        "provider": "github-actions",
+        "runId": 40438038203,
+        "jobId": 121971384520,
+        "system": "macos-arm64",
+        "sourceCommit": "13e72582b011badea855c35d7f387a82c2c2d817",
+        "testedAt": "2026-10-27T02:24:17Z",
+        "checks": {
+          "onlineAccountWindow": true,
+          "packagedLaunch": true,
+          "backupRoundTrip": true,
+          "restartPersistence": true,
+          "networkBlocked": true
+        }
+      }
+    }
+  ]
 }

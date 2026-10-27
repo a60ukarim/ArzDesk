@@ -164,15 +164,17 @@ export default function DownloadPage() {
             <ShieldCheck size={22} aria-hidden="true" />
             <h2>Direct downloads</h2>
             <p>
-              Verified installer downloads will be available here after testing.
+              Download the installer for your device directly. No account is
+              needed to download ArzDesk.
             </p>
           </div>
         </section>
 
         <p className="download-note">
-          Windows and macOS installers are undergoing testing. On iPhone and
-          Android, the installable PWA is available now. Desktop installers may
-          require publisher signing before wide distribution.
+          Windows and Mac install standalone desktop applications. Android and
+          iPhone currently use the installable web app. Desktop installers are
+          not signed by a verified publisher, so your system may ask you to
+          confirm before opening them.
         </p>
         <footer>ArzDesk — Built by ArzCore Technologies</footer>
       </div>

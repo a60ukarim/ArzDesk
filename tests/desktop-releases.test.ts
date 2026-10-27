@@ -30,9 +30,11 @@ function approved() {
   };
 }
 describe("public installer gate", () => {
-  it("keeps every real candidate unavailable until physical QA is recorded", () => {
+  it("keeps releases without test evidence unavailable", () => {
     for (const platform of ["windows", "mac-arm64", "mac-intel", "android"]) {
-      expect(getApprovedRelease(platform, undefined, base)).toBeNull();
+      expect(
+        getApprovedRelease(platform, { schemaVersion: 1, releases: [] }, base),
+      ).toBeNull();
     }
   });
   it("builds immutable, hash-bound R2 URLs and branded site links", () => {
@@ -71,6 +73,46 @@ describe("public installer gate", () => {
     wrong.releases[0].fileName = "ArzDesk-0.7.0-beta.2-mac-arm64.dmg";
     expect(getApprovedRelease("windows", wrong, base)).toBeNull();
   });
+});
+
+it("uses real native CI evidence without claiming a physical-device test", () => {
+  for (const platform of ["windows", "mac-arm64", "mac-intel"]) {
+    const release = getApprovedRelease(platform, undefined, base);
+    expect(release?.version).toBe("1.0.0");
+    expect(release?.physicalTests).toEqual([]);
+    expect(release?.automatedTest?.provider).toBe("github-actions");
+    const record = JSON.parse(JSON.stringify(release));
+    record.automatedTest.checks.onlineAccountWindow = false;
+    const { objectKey, url, downloadPath, ...entry } = record;
+    void objectKey;
+    void url;
+    void downloadPath;
+    expect(
+      getApprovedRelease(
+        platform,
+        { schemaVersion: 1, releases: [entry] },
+        base,
+      ),
+    ).toBeNull();
+    entry.automatedTest.checks.onlineAccountWindow = true;
+    entry.automatedTest.sourceCommit = "f".repeat(40);
+    expect(
+      getApprovedRelease(
+        platform,
+        { schemaVersion: 1, releases: [entry] },
+        base,
+      ),
+    ).toBeNull();
+    entry.automatedTest.sourceCommit = entry.sourceCommit;
+    entry.automatedTest.testedAt = "2099-01-01T00:00:00.000Z";
+    expect(
+      getApprovedRelease(
+        platform,
+        { schemaVersion: 1, releases: [entry] },
+        base,
+      ),
+    ).toBeNull();
+  }
 });
 
 it("requires the correct native Mac architecture test before enabling either DMG", () => {
