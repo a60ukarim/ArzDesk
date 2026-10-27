@@ -43,7 +43,7 @@ jobs:
           if ($install.ExitCode -ne 0) { throw "NSIS install failed: $($install.ExitCode)" }
           ./desktop/check-windows-icons.ps1 -Installer $files[0].FullName -InstalledDirectory $target
           $env:ARZDESK_SMOKE_PROFILE = Join-Path $env:RUNNER_TEMP "arzdesk-qa-installed-$env:GITHUB_RUN_ID"
-          foreach ($phase in @('write', 'read')) {
+          foreach ($phase in @('write', 'read', 'online')) {
             $env:ARZDESK_SMOKE_PHASE = $phase
             $process = Start-Process -FilePath "$target/ArzDesk.exe" -ArgumentList '--smoke-test' -PassThru -Wait -RedirectStandardOutput "$env:RUNNER_TEMP/smoke-$phase.log" -RedirectStandardError "$env:RUNNER_TEMP/smoke-$phase.err"
             Get-Content "$env:RUNNER_TEMP/smoke-$phase.log"

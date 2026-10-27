@@ -57,7 +57,7 @@ jobs:
           ditto "$mount/ArzDesk.app" "$installed/ArzDesk.app"
           lipo "$installed/ArzDesk.app/Contents/MacOS/ArzDesk" -verify_arch ${{ matrix.arch == 'x64' && 'x86_64' || 'arm64' }}
           export ARZDESK_SMOKE_PROFILE="$RUNNER_TEMP/arzdesk-qa-installed-${{ matrix.arch }}"
-          for phase in write read; do
+          for phase in write read online; do
             export ARZDESK_SMOKE_PHASE="$phase"
             "$installed/ArzDesk.app/Contents/MacOS/ArzDesk" --smoke-test
           done

@@ -1,6 +1,6 @@
 {
   "name": "arzdesk-desktop",
-  "version": "0.7.0-beta.3",
+  "version": "0.7.0-beta.4",
   "description": "ArzDesk offline desktop application",
   "productName": "ArzDesk",
   "main": "main.cjs",
@@ -24,7 +24,10 @@
     "files": [
       "main.cjs",
       "package.json",
-      "smoke.cjs"
+      "smoke.cjs",
+      "navigation.cjs",
+      "online-account.cjs",
+      "online-smoke.cjs"
     ],
     "extraResources": [
       {
