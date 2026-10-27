@@ -76,7 +76,7 @@ describe("public installer gate", () => {
 it("uses real native CI evidence without claiming a physical-device test", () => {
   for (const platform of ["windows", "mac-arm64", "mac-intel"]) {
     const release = getApprovedRelease(platform, undefined, base);
-    expect(release?.version).toBe("1.0.0");
+    expect(release?.version).toBe("1.0.2");
     expect(release?.physicalTests).toEqual([]);
     expect(release?.automatedTest?.provider).toBe("github-actions");
     const record = JSON.parse(JSON.stringify(release));
