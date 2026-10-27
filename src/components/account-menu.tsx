@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useId, useRef, useState } from "react";
 import { Settings2, ChevronRight, X, Download } from "lucide-react";
 import { SignOut } from "./sign-out";
+import { rememberWorkspaceReturn } from "@/lib/workspace-return";
 
 export function AccountMenu({
   person,
@@ -81,16 +82,7 @@ export function AccountMenu({
             href="/profile"
             className="drawer-settings"
             onClick={() => {
-              if (window.location.pathname !== "/profile") {
-                try {
-                  sessionStorage.setItem(
-                    "arzdesk-account-return",
-                    window.location.pathname +
-                      window.location.search +
-                      window.location.hash,
-                  );
-                } catch {}
-              }
+              rememberWorkspaceReturn("account");
               close();
             }}
           >
@@ -101,7 +93,14 @@ export function AccountMenu({
             </span>
             <ChevronRight size={17} />
           </Link>
-          <Link href="/install" className="drawer-install" onClick={close}>
+          <Link
+            href="/install"
+            className="drawer-install"
+            onClick={() => {
+              rememberWorkspaceReturn("install");
+              close();
+            }}
+          >
             <Download size={18} />
             Install ArzDesk
           </Link>

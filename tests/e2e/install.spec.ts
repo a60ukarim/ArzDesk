@@ -147,3 +147,68 @@ for (const desktop of ["electron", "standalone"] as const) {
     }
   });
 }
+
+test("desktop online workspace survives profile and installation detours", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ArzDesk/1.0.0 Chrome/144.0.0.0 Electron/44.9.3 Safari/537.36",
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto("/sign-up");
+    await page.getByLabel("Your name").fill("Return Flow Test");
+    await page
+      .getByLabel("Email address")
+      .fill(`return-${Date.now()}@example.com`);
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("return-flow-test-password");
+    await page
+      .getByRole("button", { name: "Create account", exact: true })
+      .click();
+    await page.getByLabel("Workspace name").fill("Return Flow Workspace");
+    await page
+      .getByRole("button", { name: "Create workspace", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/w\//);
+    const base = new URL(page.url()).pathname
+      .replace(/\/overview$/, "")
+      .replace(/\/$/, "");
+    const target = `${base}/tasks?view=recent#return-check`;
+    await page.goto(target);
+    await page
+      .getByRole("button", { name: "Open account menu", exact: true })
+      .click();
+    await page
+      .getByRole("link", { name: "Settings Name, email & password" })
+      .click();
+    await expect(page).toHaveURL(/\/profile$/);
+    await page
+      .getByRole("button", { name: "Open account menu", exact: true })
+      .click();
+    await page
+      .getByRole("link", { name: "Install ArzDesk", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/install$/);
+    await expect(
+      page.getByRole("link", { name: "Open workspace", exact: true }),
+    ).toHaveAttribute("href", target);
+    await page.reload();
+    await page
+      .getByRole("link", { name: "Open workspace", exact: true })
+      .click();
+    await expect(page).toHaveURL(new URL(target, page.url()).href);
+    await page
+      .getByRole("button", { name: "Open account menu", exact: true })
+      .click();
+    await page
+      .getByRole("link", { name: "Settings Name, email & password" })
+      .click();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page).toHaveURL(new URL(target, page.url()).href);
+  } finally {
+    await context.close();
+  }
+});
