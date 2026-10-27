@@ -33,6 +33,29 @@ export function AppInstall() {
     () => null,
   );
   const [message, setMessage] = useState("");
+  const mobile =
+    ready &&
+    (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+  if (!mobile)
+    return (
+      <>
+        <Button asChild>
+          <Link href="/download">
+            <Download size={18} />
+            Get the desktop app
+          </Link>
+        </Button>
+        <p className="notice">
+          Choose the Windows EXE or Mac DMG for a standalone application. It
+          opens in its own window and is uninstalled through your system’s app
+          settings.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="/offline">Continue in browser</Link>
+        </Button>
+      </>
+    );
   return (
     <>
       {isInstalled ? (
