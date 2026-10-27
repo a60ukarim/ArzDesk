@@ -9,8 +9,11 @@ import {
   subscribeInstallPrompt,
 } from "@/lib/app-install-state";
 
+let installedInThisTab = false;
+
 function installed() {
   return (
+    installedInThisTab ||
     window.matchMedia("(display-mode: standalone)").matches ||
     !!(navigator as Navigator & { standalone?: boolean }).standalone
   );
@@ -18,10 +21,14 @@ function installed() {
 function subscribeInstalled(notify: () => void) {
   const media = window.matchMedia("(display-mode: standalone)");
   media.addEventListener("change", notify);
-  window.addEventListener("appinstalled", notify);
+  const onInstalled = () => {
+    installedInThisTab = true;
+    notify();
+  };
+  window.addEventListener("appinstalled", onInstalled);
   return () => {
     media.removeEventListener("change", notify);
-    window.removeEventListener("appinstalled", notify);
+    window.removeEventListener("appinstalled", onInstalled);
   };
 }
 
@@ -43,6 +50,7 @@ export function PhoneDownloadInstall({
   );
   const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [message, setMessage] = useState("");
   const android = ready && /Android/i.test(navigator.userAgent);
   const ios =
@@ -56,10 +64,9 @@ export function PhoneDownloadInstall({
   if (matchingDevice && isInstalled)
     return (
       <div className="download-phone-install">
-        <p role="status">ArzDesk is installed on this device.</p>
-        <a className="download-platform-primary" href="/offline">
-          Open ArzDesk
-        </a>
+        <p role="status">
+          ArzDesk is installed. Open it from your home screen.
+        </p>
       </div>
     );
 
@@ -68,7 +75,7 @@ export function PhoneDownloadInstall({
       <button
         className="download-platform-primary"
         type="button"
-        disabled={busy}
+        disabled={busy || accepted}
         aria-expanded={expanded}
         aria-controls={stepsId}
         onClick={async () => {
@@ -80,6 +87,7 @@ export function PhoneDownloadInstall({
           try {
             await prompt.prompt();
             const choice = await prompt.userChoice;
+            setAccepted(choice.outcome === "accepted");
             setMessage(
               choice.outcome === "accepted"
                 ? "Installation accepted. When it finishes, open ArzDesk from your home screen."
@@ -93,27 +101,36 @@ export function PhoneDownloadInstall({
         }}
       >
         <Download size={17} aria-hidden="true" />
-        {busy ? "Installing…" : `Install on ${label}`}
+        {busy
+          ? "Installing…"
+          : accepted
+            ? "Installation requested"
+            : `Install on ${label}`}
       </button>
       <div id={stepsId} hidden={!expanded} className="download-phone-steps">
         {message && <p role="status">{message}</p>}
-        {platform === "android" ? (
-          <p>
-            On your Android phone, open this page in Chrome. Tap{" "}
-            <strong>⋮</strong>, choose <strong>Install app</strong> or{" "}
-            <strong>Add to Home screen</strong>, then confirm.
-          </p>
-        ) : (
-          <p>
-            On your iPhone or iPad, open this page in Safari. Tap{" "}
-            <strong>Share</strong>, choose <strong>Add to Home Screen</strong>,
-            then tap <strong>Add</strong>.
-          </p>
+        {!accepted && (
+          <>
+            {platform === "android" ? (
+              <p>
+                On your Android phone, open this page in Chrome. Tap{" "}
+                <strong>⋮</strong>, choose <strong>Install app</strong> or{" "}
+                <strong>Add to Home screen</strong>, then confirm.
+              </p>
+            ) : (
+              <p>
+                On your iPhone or iPad, open this page in Safari. Tap{" "}
+                <strong>Share</strong>, choose{" "}
+                <strong>Add to Home Screen</strong>, then tap{" "}
+                <strong>Add</strong>.
+              </p>
+            )}
+            <p>
+              Open ArzDesk using its icon on your home screen. No app store
+              account is needed.
+            </p>
+          </>
         )}
-        <p>
-          Open ArzDesk using its icon on your home screen. No app store account
-          is needed.
-        </p>
       </div>
     </div>
   );

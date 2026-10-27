@@ -172,6 +172,36 @@ for (const outcome of ["accepted", "dismissed"] as const) {
           ? "Installation accepted"
           : "Installation was cancelled",
       );
+      if (outcome === "accepted") {
+        await expect(
+          page.getByRole("button", {
+            name: "Installation requested",
+            exact: true,
+          }),
+        ).toBeDisabled();
+        await expect(page.locator("#install-android-steps")).not.toContainText(
+          "choose Install app",
+        );
+        await page.evaluate(() =>
+          window.dispatchEvent(new Event("appinstalled")),
+        );
+        await expect(
+          page.getByText(
+            "ArzDesk is installed. Open it from your home screen.",
+            { exact: true },
+          ),
+        ).toBeVisible();
+        await expect(
+          page.getByRole("button", {
+            name: "Installation requested",
+            exact: true,
+          }),
+        ).toHaveCount(0);
+      } else {
+        await expect(page.locator("#install-android-steps")).toContainText(
+          "choose Install app",
+        );
+      }
       await expect(page).toHaveURL(/\/download$/);
       await page
         .getByRole("button", { name: "Install on iPhone & iPad", exact: true })
