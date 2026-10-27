@@ -1,24 +1,42 @@
-const { BrowserWindow, Menu, dialog, session } = require("electron");
+const { WebContentsView, Menu, dialog, session } = require("electron");
 const { WEB, destination } = require("./navigation.cjs");
 
-module.exports = function onlineAccount({ deviceWindow, icon, external }) {
-  // Online cookies have their own persistent store. The existing device profile
-  // and arzdesk://local IndexedDB stay in the unchanged default session.
+module.exports = function onlineAccount({ deviceWindow, external }) {
+  // Retain the existing online cookie partition and local IndexedDB profile.
   const accountSession = session.fromPartition("persist:arzdesk-online");
   accountSession.setPermissionRequestHandler((_contents, _permission, reply) =>
     reply(false),
   );
   accountSession.setPermissionCheckHandler(() => false);
-  let accountWindow;
+  let accountView;
+  let visible = false;
   let errorVisible = false;
 
+  function fit() {
+    if (!visible || !accountView || deviceWindow.isDestroyed()) return;
+    const { width, height } = deviceWindow.getContentBounds();
+    accountView.setBounds({ x: 0, y: 0, width, height });
+  }
+  deviceWindow.on("resize", fit);
+
   function returnToDevice() {
-    if (!deviceWindow.isDestroyed()) {
-      deviceWindow.show();
-      if (deviceWindow.isMinimized()) deviceWindow.restore();
-      deviceWindow.focus();
-    }
-    if (accountWindow && !accountWindow.isDestroyed()) accountWindow.close();
+    if (deviceWindow.isDestroyed()) return;
+    if (visible && accountView)
+      deviceWindow.contentView.removeChildView(accountView);
+    visible = false;
+    deviceWindow.setTitle(deviceWindow.webContents.getTitle() || "ArzDesk");
+    deviceWindow.show();
+    if (deviceWindow.isMinimized()) deviceWindow.restore();
+    deviceWindow.focus();
+    deviceWindow.webContents.focus();
+  }
+
+  function close() {
+    returnToDevice();
+    const view = accountView;
+    accountView = undefined;
+    visible = false;
+    if (view && !view.webContents.isDestroyed()) view.webContents.close();
   }
 
   function route(target, allowExternal = true) {
@@ -28,11 +46,12 @@ module.exports = function onlineAccount({ deviceWindow, icon, external }) {
     else if (next.kind === "external" && allowExternal) void external(next.url);
   }
 
-  async function loadError(window) {
-    if (window.isDestroyed() || errorVisible) return;
+  async function loadError(contents) {
+    if (deviceWindow.isDestroyed() || contents.isDestroyed() || errorVisible)
+      return;
     errorVisible = true;
     try {
-      const { response } = await dialog.showMessageBox(window, {
+      const { response } = await dialog.showMessageBox(deviceWindow, {
         type: "info",
         title: "Online account unavailable",
         message: "Your online account needs an internet connection.",
@@ -42,8 +61,8 @@ module.exports = function onlineAccount({ deviceWindow, icon, external }) {
         defaultId: 0,
         cancelId: 0,
       });
-      if (!window.isDestroyed()) {
-        if (response === 1) window.webContents.reload();
+      if (!contents.isDestroyed() && !deviceWindow.isDestroyed()) {
+        if (response === 1) contents.reload();
         else returnToDevice();
       }
     } finally {
@@ -54,15 +73,9 @@ module.exports = function onlineAccount({ deviceWindow, icon, external }) {
   async function open(target = WEB + "/cloud") {
     const next = destination(target);
     if (next.kind !== "online") throw Error("Untrusted account address");
-    if (!accountWindow || accountWindow.isDestroyed()) {
-      const window = new BrowserWindow({
-        width: 1180,
-        height: 810,
-        minWidth: 390,
-        minHeight: 500,
-        title: "ArzDesk · Online account",
-        icon,
-        show: false,
+    if (deviceWindow.isDestroyed()) return;
+    if (!accountView || accountView.webContents.isDestroyed()) {
+      const view = new WebContentsView({
         webPreferences: {
           session: accountSession,
           sandbox: true,
@@ -74,35 +87,9 @@ module.exports = function onlineAccount({ deviceWindow, icon, external }) {
           devTools: false,
         },
       });
-      accountWindow = window;
-      window.setMenu(
-        Menu.buildFromTemplate([
-          {
-            label: "ArzDesk",
-            submenu: [
-              { label: "Back to device workspaces", click: returnToDevice },
-              {
-                label: "Back",
-                accelerator: "Alt+Left",
-                click: () => {
-                  const history = window.webContents.navigationHistory;
-                  if (history.canGoBack()) history.goBack();
-                },
-              },
-              { role: "reload" },
-              { type: "separator" },
-              { role: "close", label: "Close online account" },
-            ],
-          },
-          { role: "editMenu" },
-        ]),
-      );
-      window.once("ready-to-show", () => window.show());
-      window.once("closed", () => {
-        if (accountWindow === window) accountWindow = undefined;
-        if (!deviceWindow.isDestroyed()) deviceWindow.focus();
-      });
-      window.webContents.setWindowOpenHandler(({ url }) => {
+      accountView = view;
+      const contents = view.webContents;
+      contents.setWindowOpenHandler(({ url }) => {
         route(url);
         return { action: "deny" };
       });
@@ -113,41 +100,87 @@ module.exports = function onlineAccount({ deviceWindow, icon, external }) {
         if (event.isMainFrame === false) return;
         route(url, !redirect);
       }
-      window.webContents.on("will-navigate", (event, url) =>
-        navigate(event, url),
-      );
-      window.webContents.on("will-redirect", (event, url) =>
-        navigate(event, url, true),
-      );
-      window.webContents.on(
-        "did-navigate-in-page",
-        (_event, url, mainFrame) => {
-          if (mainFrame && destination(url).kind === "device") returnToDevice();
-        },
-      );
-      window.webContents.on(
+      contents.on("will-navigate", (event, url) => navigate(event, url));
+      contents.on("will-redirect", (event, url) => navigate(event, url, true));
+      contents.on("did-navigate-in-page", (_event, url, mainFrame) => {
+        if (mainFrame && destination(url).kind === "device") returnToDevice();
+      });
+      contents.on("page-title-updated", (_event, title) => {
+        if (visible && !deviceWindow.isDestroyed())
+          deviceWindow.setTitle(title);
+      });
+      contents.on(
         "did-fail-load",
         (_event, code, _description, _url, mainFrame) => {
-          if (mainFrame && code !== -3) void loadError(window);
+          if (mainFrame && code !== -3) void loadError(contents);
         },
       );
     }
-    const window = accountWindow;
-    window.show();
-    if (window.isMinimized()) window.restore();
-    window.focus();
-    try {
-      await window.loadURL(next.url);
-    } catch {
-      // did-fail-load provides a native retry / device-workspaces choice.
+    const view = accountView;
+    if (!visible) deviceWindow.contentView.addChildView(view);
+    visible = true;
+    fit();
+    deviceWindow.show();
+    if (deviceWindow.isMinimized()) deviceWindow.restore();
+    deviceWindow.focus();
+    view.webContents.focus();
+    // Switching back online resumes the existing page, including unsaved form state.
+    const current = view.webContents.getURL();
+    if (target === WEB + "/cloud" && destination(current).kind === "online") {
+      deviceWindow.setTitle(
+        view.webContents.getTitle() || "ArzDesk · Online account",
+      );
+      return view;
     }
-    return window;
+    try {
+      await view.webContents.loadURL(next.url);
+    } catch {
+      // did-fail-load provides a retry / local-workspaces choice in this window.
+    }
+    return view;
   }
+
+  deviceWindow.setMenu(
+    Menu.buildFromTemplate([
+      {
+        label: "ArzDesk",
+        submenu: [
+          { label: "Online account", click: () => void open() },
+          { label: "Device workspaces (offline)", click: returnToDevice },
+          { type: "separator" },
+          {
+            label: "Back",
+            accelerator: "Alt+Left",
+            click: () => {
+              const contents =
+                visible && accountView
+                  ? accountView.webContents
+                  : deviceWindow.webContents;
+              const history = contents.navigationHistory;
+              if (history.canGoBack()) history.goBack();
+            },
+          },
+          { role: "reload" },
+          { type: "separator" },
+          { role: "close" },
+        ],
+      },
+      { role: "editMenu" },
+    ]),
+  );
+  deviceWindow.setAutoHideMenuBar(false);
+  deviceWindow.setMenuBarVisibility(true);
 
   return {
     open,
+    close,
     returnToDevice,
+    dispose: () => {
+      deviceWindow.removeListener("resize", fit);
+      close();
+    },
     session: accountSession,
-    window: () => accountWindow,
+    view: () => accountView,
+    isVisible: () => visible,
   };
 };
