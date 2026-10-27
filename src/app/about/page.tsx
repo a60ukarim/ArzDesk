@@ -277,6 +277,27 @@ export default function AboutPage() {
           <div className="rounded-2xl border border-neutral-300 p-6">
             <LockKeyhole aria-hidden="true" size={20} />
             <h3 className="mt-3 text-base font-extrabold">
+              Recover your online account
+            </h3>
+            <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
+              On the sign-in page, choose{" "}
+              <Link
+                href="/forgot-password"
+                className="underline underline-offset-4"
+              >
+                Forgot password?
+              </Link>{" "}
+              and enter your account email. When recovery email is available,
+              check your inbox and spam folder for a private reset link. The
+              link expires after 15 minutes and works once. Choose a new
+              password, then sign in again. Local work has no online account to
+              recover; restore it by importing an exported backup on your
+              device.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-neutral-300 p-6">
+            <LockKeyhole aria-hidden="true" size={20} />
+            <h3 className="mt-3 text-base font-extrabold">
               Desktop downloads and phone installation
             </h3>
             <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
