@@ -116,19 +116,15 @@ async function boot() {
     : external;
   const online = require("./online-account.cjs")({
     deviceWindow: window,
-    icon: path.join(folder, "arzdesk-logo-v1.png"),
     external: openExternal,
   });
   function follow(target) {
     const next = destination(target);
     if (next.kind === "online") void online.open(next.url);
     else if (next.kind === "external") void openExternal(next.url);
-    else if (next.kind === "device") {
-      window.show();
-      window.focus();
-    }
+    else if (next.kind === "device") online.returnToDevice();
   }
-  window.once("closed", () => online.returnToDevice());
+  window.once("closed", () => online.dispose());
   window.webContents.session.setPermissionRequestHandler(
     (_webContents, _permission, callback) => callback(false),
   );

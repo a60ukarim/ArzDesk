@@ -1,5 +1,6 @@
 // Synthetic account pages: no production accounts, credentials or workspaces.
 module.exports = async function onlineSmoke(device, online, externalTargets) {
+  const { BrowserWindow } = require("electron");
   const { WEB } = require("./navigation.cjs");
   const execute = (window, code) =>
     window.webContents.executeJavaScript(code, true);
@@ -9,7 +10,7 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
       if (await check()) return;
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    throw Error("Online-window QA timed out");
+    throw Error("Single-window online QA timed out");
   }
   await wait(() =>
     execute(device, "Boolean(document.querySelector('.local-home input'))"),
@@ -49,10 +50,25 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
   try {
     // Exercise the actual local /cloud link, rather than invoking an OS browser.
     await execute(device, `document.querySelector('a[href="/cloud"]').click()`);
-    await wait(() => Boolean(online.window()));
-    let account = online.window();
+    await wait(() => Boolean(online.view()));
+    let account = online.view();
     await wait(() =>
       execute(account, "Boolean(document.querySelector('form'))"),
+    );
+    if (BrowserWindow.getAllWindows().length !== 1 || !online.isVisible())
+      throw Error("Online account must share the existing application window");
+    const bounds = account.getBounds();
+    const content = device.getContentBounds();
+    if (
+      bounds.x !== 0 ||
+      bounds.y !== 0 ||
+      bounds.width !== content.width ||
+      bounds.height !== content.height
+    )
+      throw Error("Online view does not fill the application window");
+    device.setSize(920, 680);
+    await wait(
+      () => account.getBounds().width === device.getContentBounds().width,
     );
     const settings = account.webContents.getLastWebPreferences();
     if (
@@ -79,8 +95,8 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
       ),
     );
     await online.session.cookies.flushStore();
-    account.close();
-    await wait(() => !online.window());
+    online.close();
+    await wait(() => !online.view());
     account = await online.open();
     await wait(() =>
       execute(
@@ -90,16 +106,30 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
     );
     await execute(account, "document.getElementById('profile').click()");
     await wait(() => account.webContents.getURL() === WEB + "/profile");
-    if (online.window() !== account)
-      throw Error("Trusted popup created another account window");
+    if (online.view() !== account)
+      throw Error("Trusted popup created another online view");
+    await execute(account, "document.body.dataset.resumeMarker='retained'");
+    online.returnToDevice();
+    await wait(() => !online.isVisible());
+    const resumed = await online.open();
+    if (
+      resumed !== account ||
+      !(await execute(
+        account,
+        "document.body.dataset.resumeMarker === 'retained'",
+      ))
+    )
+      throw Error("Mode switch discarded online page state");
+    if (BrowserWindow.getAllWindows().length !== 1)
+      throw Error("Mode switch created another native window");
     await execute(account, "document.getElementById('logout').click()");
     await wait(
       async () =>
         (await online.session.cookies.get({ name: "arzdesk_qa_session" }))
           .length === 0,
     );
-    account.close();
-    await wait(() => !online.window());
+    online.close();
+    await wait(() => !online.view());
     account = await online.open();
     await wait(() =>
       execute(account, "Boolean(document.querySelector('form'))"),
@@ -113,7 +143,9 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
     });
     account = await online.open(WEB + "/workspaces");
     await execute(account, "document.getElementById('device').click()");
-    await wait(() => !online.window());
+    await wait(() => !online.isVisible());
+    if (BrowserWindow.getAllWindows().length !== 1)
+      throw Error("Online account opened an additional native window");
     if (
       device.webContents.getURL() !== originalURL ||
       (await execute(device, snapshot)) !== before
@@ -124,7 +156,7 @@ module.exports = async function onlineSmoke(device, online, externalTargets) {
     if (!requests.some((url) => url.endsWith("/profile")))
       throw Error("Missing profile navigation");
     console.log(
-      "ARZDESK_ONLINE_WINDOW_QA_OK synthetic login, persistent cookies, logout, device return; no production writes",
+      "ARZDESK_ONLINE_WINDOW_QA_OK single native window, resize, mode switching, synthetic login, persistent cookies, logout, device return; no production writes",
     );
   } finally {
     online.returnToDevice();
