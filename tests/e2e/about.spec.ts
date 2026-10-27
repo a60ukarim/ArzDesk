@@ -16,19 +16,19 @@ test("public product page has readable calls to action and fits mobile", async (
       background: "rgb(24, 24, 24)",
     },
     {
-      label: "Open ArzDesk",
+      label: "Try in browser",
       href: "/offline",
       color: "rgb(24, 24, 24)",
       background: "rgb(255, 255, 255)",
     },
     {
-      label: "Install on your device",
+      label: "Download ArzDesk",
       href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgba(0, 0, 0, 0)",
     },
     {
-      label: "See installation steps",
+      label: "Choose your download",
       href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgb(24, 24, 24)",
@@ -46,7 +46,7 @@ test("public product page has readable calls to action and fits mobile", async (
     .getAttribute("content");
   expect(robots?.includes("noindex")).toBe(false);
   await expect(
-    page.getByText("Device work does not automatically sync", { exact: false }),
+    page.getByText("Local work does not automatically sync", { exact: false }),
   ).toBeVisible();
 
   for (const theme of ["light", "dark"]) {

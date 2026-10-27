@@ -109,7 +109,7 @@ export default function AboutPage() {
           <div className="relative grid items-center gap-12 md:grid-cols-[1.2fr_0.8fr]">
             <div className="max-w-2xl">
               <span className="inline-block rounded-full border border-white/30 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.17em] text-neutral-200">
-                Free · Open source · Installable web app
+                Free · Open source · Desktop & mobile
               </span>
               <h1 className="mt-7 text-[clamp(38px,6.5vw,76px)] font-black leading-[1.04] tracking-[-0.045em]">
                 Make room for what matters.
@@ -124,13 +124,13 @@ export default function AboutPage() {
                   href="/offline"
                   className="launch-cta launch-cta--light inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-extrabold text-black hover:bg-neutral-200"
                 >
-                  Open ArzDesk <ArrowRight size={16} />
+                  Try in browser <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/download"
                   className="launch-cta launch-cta--hero-outline inline-flex min-h-12 items-center gap-2 rounded-xl border border-white/35 px-5 py-3 text-xs font-extrabold text-white hover:bg-white/10"
                 >
-                  <Download size={16} /> Install on your device
+                  <Download size={16} /> Download ArzDesk
                 </Link>
               </div>
               <p className="mt-5 text-[11px] font-medium text-neutral-400">
@@ -227,12 +227,12 @@ export default function AboutPage() {
           <ol className="space-y-6">
             {[
               [
-                "Open ArzDesk",
-                "Choose Open ArzDesk to open device mode. No account is needed.",
+                "Choose your device",
+                "Visit the download page for the Windows EXE, Mac DMG or phone installation. No account is needed for local work.",
               ],
               [
-                "Wait for offline readiness",
-                "Connect once and look for “Ready for offline use” before going offline.",
+                "Start working offline",
+                "Desktop apps include the local app files. On phones, connect once and look for “Ready for offline use” before going offline.",
               ],
               [
                 "Make a backup",
@@ -275,21 +275,24 @@ export default function AboutPage() {
               Device data stays on your device
             </h3>
             <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
-              Offline work is stored in this browser. Clearing its data or
-              losing the device can erase your work. Export backups. Device work
-              does not automatically sync with online accounts or other devices.
+              Local work is stored in the desktop app or the browser used for
+              your phone installation. Deleting that local data or losing the
+              device can erase your work, so export backups regularly. Local
+              work does not automatically sync with online accounts or other
+              devices. Others using the same device profile can access local
+              work.
             </p>
           </div>
           <div className="rounded-2xl border border-neutral-300 p-6">
             <LockKeyhole aria-hidden="true" size={20} />
             <h3 className="mt-3 text-base font-extrabold">
-              An installable web app, not an EXE
+              Desktop downloads and phone installation
             </h3>
             <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">
-              Install with Chrome, Edge or Safari on supported devices. Online
-              workspaces, sign-in and team sharing require a connection. Local
-              device mode does not password-protect its records from others
-              using the same browser profile.
+              Windows 10 and 11 use an EXE installer. Mac uses a DMG for Apple
+              Silicon or Intel. Android, iPhone and iPad currently use the
+              installable web app (PWA). Online accounts and shared workspaces
+              need an internet connection.
             </p>
           </div>
         </div>
@@ -298,7 +301,7 @@ export default function AboutPage() {
             href="/download"
             className="launch-cta launch-cta--dark inline-flex items-center gap-2 rounded-xl bg-[#181818] px-6 py-4 text-xs font-extrabold text-white hover:bg-neutral-700"
           >
-            See installation steps <ArrowRight size={16} />
+            Choose your download <ArrowRight size={16} />
           </Link>
           <a
             href="https://github.com/a60ukarim/ArzDesk"
