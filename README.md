@@ -106,7 +106,7 @@ Compose starts PostgreSQL, applies migrations in a one-shot tooling container, t
 
 ## Install on a device
 
-After deploying to HTTPS, open `/install` for Windows, Mac, Android and iPhone instructions. The same account and workspaces are available across devices. This is an online PWA: it opens in its own window but needs an internet connection and a hosted backend. It is not an EXE or APK. Account pages and API responses are never stored in the service-worker cache.
+Open `/download` for Windows 10/11 EXE installers, Apple Silicon and Intel Mac DMGs, and in-page Android/iPhone/iPad PWA installation. Desktop local work runs offline; phone PWAs need an initial online visit to prepare offline access. Local workspaces stay separate on each device and can be moved using export/import backups. Online accounts and shared workspaces require a connection and the hosted backend. Android APK and native App Store releases are not available yet. Account pages and API responses are never stored in the service-worker cache.
 
 Production needs a reachable PostgreSQL database, unique authentication secret, canonical HTTPS URL and configured SMTP for password recovery. A private GitHub repository keeps source private; configure deployment access separately. See [hosting setup](docs/install-and-host.ar.md).
 
