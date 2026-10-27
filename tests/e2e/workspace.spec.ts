@@ -741,6 +741,9 @@ test("only the hanging cedar toggles saved light and dark appearances", async ({
     .getByRole("link", { name: "Create an account", exact: true })
     .click();
   await expect(root).toHaveAttribute("data-theme", "dark");
+  await expect(
+    page.getByRole("button", { name: "Switch to light mode", exact: true }),
+  ).toBeEnabled();
   await page
     .getByRole("button", { name: "Switch to light mode", exact: true })
     .focus();

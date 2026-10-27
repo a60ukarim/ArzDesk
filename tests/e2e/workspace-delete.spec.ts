@@ -12,6 +12,7 @@ test("deleting one same-name offline workspace leaves the other untouched", asyn
   await page
     .getByRole("button", { name: "Create workspace", exact: true })
     .click();
+  await expect(page).toHaveURL(/#.+\/overview$/);
   await page.goto("/offline");
 
   await page.locator(".local-add-workspace summary").click();
@@ -19,6 +20,7 @@ test("deleting one same-name offline workspace leaves the other untouched", asyn
   await page
     .getByRole("button", { name: "Create workspace", exact: true })
     .click();
+  await expect(page).toHaveURL(/#.+\/overview$/);
   await page.goto("/offline");
 
   const cards = page.locator(".local-workspaces .org-card");
