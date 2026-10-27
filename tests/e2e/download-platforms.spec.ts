@@ -1,4 +1,17 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+const releases = JSON.parse(
+  readFileSync(
+    new URL("../../releases/approved-installers.json", import.meta.url),
+    "utf8",
+  ),
+).releases as {
+  platform: string;
+  version: string;
+  sha256: string;
+  fileName: string;
+}[];
 
 test("download hub shows mobile install routes and honest desktop status", async ({
   page,
@@ -8,8 +21,13 @@ test("download hub shows mobile install routes and honest desktop status", async
     const response = await request.get(`/download/${platform}`, {
       maxRedirects: 0,
     });
-    expect(response.status()).toBe(503);
-    expect(response.headers().location).toBeUndefined();
+    const release = releases.find((item) => item.platform === platform);
+    expect(response.status()).toBe(release ? 307 : 503);
+    expect(response.headers().location).toBe(
+      release
+        ? `${process.env.ARZDESK_RELEASES_BASE_URL || "https://pub-53bc8476c2234ed0be7e02fb5c528d42.r2.dev"}/${release.fileName}`
+        : undefined,
+    );
   }
   for (const width of [320, 390, 768, 1366]) {
     await page.setViewportSize({ width, height: 900 });
@@ -20,10 +38,13 @@ test("download hub shows mobile install routes and honest desktop status", async
     await expect(page.locator('a[href*="github"]')).toHaveCount(0);
     await expect(
       page.getByRole("link", { name: "Download .exe", exact: true }),
-    ).toHaveCount(0);
+    ).toHaveAttribute("href", "/download/windows");
     await expect(
       page.getByRole("link", { name: "Apple Silicon .dmg", exact: true }),
-    ).toHaveCount(0);
+    ).toHaveAttribute("href", "/download/mac-arm64");
+    await expect(
+      page.getByRole("link", { name: "Intel .dmg", exact: true }),
+    ).toHaveAttribute("href", "/download/mac-intel");
     const platforms = page.locator(".download-platform");
     await expect(platforms).toHaveCount(4);
     await expect(page.getByRole("heading", { name: "Windows" })).toBeVisible();
@@ -35,11 +56,14 @@ test("download hub shows mobile install routes and honest desktop status", async
       page.getByRole("heading", { name: "iPhone & iPad" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Install on Android (PWA)" }),
-    ).toHaveAttribute("href", "/install#installation-steps");
+      page.getByRole("button", { name: "Install on Android", exact: true }),
+    ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Install on iPhone (PWA)" }),
-    ).toHaveAttribute("href", "/install#installation-steps");
+      page.getByRole("button", {
+        name: "Install on iPhone & iPad",
+        exact: true,
+      }),
+    ).toBeVisible();
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(width);
@@ -101,9 +125,59 @@ for (const mobile of [false, true]) {
         await page.getByRole("link", { name: "Get the desktop app" }).click();
         await expect(page).toHaveURL(/\/download$/);
         await expect(
-          page.getByText("Windows installer in testing"),
+          page.getByRole("link", { name: "Download .exe", exact: true }),
         ).toBeVisible();
       }
+    } finally {
+      await context.close();
+    }
+  });
+}
+
+for (const outcome of ["accepted", "dismissed"] as const) {
+  test(`Android installs from download hub: ${outcome}`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({
+      userAgent:
+        "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36",
+    });
+    try {
+      const page = await context.newPage();
+      await page.goto("/download");
+      await expect(
+        page.getByRole("button", { name: "Install on Android", exact: true }),
+      ).toBeVisible();
+      await page.evaluate((outcome) => {
+        window.dispatchEvent(
+          Object.assign(new Event("beforeinstallprompt"), {
+            prompt: async () => {
+              document.documentElement.dataset.promptCalled = "yes";
+            },
+            userChoice: Promise.resolve({ outcome }),
+          }),
+        );
+      }, outcome);
+      await page
+        .getByRole("button", { name: "Install on Android", exact: true })
+        .click();
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-prompt-called",
+        "yes",
+      );
+      await expect(
+        page.locator("#install-android-steps").getByRole("status"),
+      ).toContainText(
+        outcome === "accepted"
+          ? "Installation accepted"
+          : "Installation was cancelled",
+      );
+      await expect(page).toHaveURL(/\/download$/);
+      await page
+        .getByRole("button", { name: "Install on iPhone & iPad", exact: true })
+        .click();
+      await expect(page.locator("#install-ios-steps")).toContainText("Safari");
+      await expect(page).toHaveURL(/\/download$/);
     } finally {
       await context.close();
     }

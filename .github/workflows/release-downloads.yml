@@ -1,0 +1,26 @@
+name: Verify public installer downloads
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - releases/approved-installers.json
+      - src/lib/desktop-releases.ts
+      - scripts/verify-installer-downloads.ts
+      - .github/workflows/release-downloads.yml
+permissions:
+  contents: read
+jobs:
+  public-files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Download every approved file and verify size, SHA-256 and download headers
+        run: node --import tsx scripts/verify-installer-downloads.ts

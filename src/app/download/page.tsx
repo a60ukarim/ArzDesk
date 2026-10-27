@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getApprovedRelease } from "@/lib/desktop-releases";
 import { Brand } from "@/components/brand";
+import { PhoneDownloadInstall } from "@/components/phone-download-install";
 
 export const metadata = {
   title: "Download ArzDesk for Windows, Mac, Android and iPhone",
@@ -114,13 +115,7 @@ export default function DownloadPage() {
               Install the web app on your home screen now. Native APK support is
               planned.
             </p>
-            <Link
-              className="download-platform-primary"
-              href="/install#installation-steps"
-            >
-              <Download size={17} aria-hidden="true" />
-              Install on Android (PWA)
-            </Link>
+            <PhoneDownloadInstall platform="android" />
           </article>
 
           <article className="download-platform">
@@ -133,13 +128,7 @@ export default function DownloadPage() {
               Use Safari’s Add to Home Screen option. A native App Store release
               is not available yet.
             </p>
-            <Link
-              className="download-platform-primary"
-              href="/install#installation-steps"
-            >
-              <Download size={17} aria-hidden="true" />
-              Install on iPhone (PWA)
-            </Link>
+            <PhoneDownloadInstall platform="ios" />
           </article>
         </section>
 
@@ -164,15 +153,17 @@ export default function DownloadPage() {
             <ShieldCheck size={22} aria-hidden="true" />
             <h2>Direct downloads</h2>
             <p>
-              Verified installer downloads will be available here after testing.
+              Download the installer for your device directly. No account is
+              needed to download ArzDesk.
             </p>
           </div>
         </section>
 
         <p className="download-note">
-          Windows and macOS installers are undergoing testing. On iPhone and
-          Android, the installable PWA is available now. Desktop installers may
-          require publisher signing before wide distribution.
+          Windows and Mac install standalone desktop applications. Android and
+          iPhone currently use the installable web app. Desktop installers are
+          not signed by a verified publisher, so your system may ask you to
+          confirm before opening them.
         </p>
         <footer>ArzDesk — Built by ArzCore Technologies</footer>
       </div>
