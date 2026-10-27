@@ -1,6 +1,6 @@
 {
   "name": "arzdesk-desktop",
-  "version": "0.7.0-beta.4",
+  "version": "1.0.0",
   "description": "ArzDesk offline desktop application",
   "productName": "ArzDesk",
   "main": "main.cjs",
