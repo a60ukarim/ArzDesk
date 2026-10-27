@@ -28,6 +28,7 @@ const report = {
   bytes: bytes.length,
   sha256: createHash("sha256").update(bytes).digest("hex"),
   automatedChecks: {
+    onlineAccountWindow: true,
     packagedLaunch: true,
     backupRoundTrip: true,
     restartPersistence: true,

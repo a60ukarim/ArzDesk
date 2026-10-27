@@ -1,10 +1,9 @@
 const { app, BrowserWindow, protocol, shell } = require("electron");
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { HOME, destination } = require("./navigation.cjs");
 
 const SCHEME = "arzdesk";
-const HOME = "arzdesk://local/offline";
-const WEB = "https://arzdesk-sage.vercel.app";
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -109,6 +108,27 @@ async function boot() {
     },
   });
   const outbound = [];
+  const externalTargets = [];
+  const openExternal = smokeMode
+    ? async (url) => {
+        externalTargets.push(url);
+      }
+    : external;
+  const online = require("./online-account.cjs")({
+    deviceWindow: window,
+    icon: path.join(folder, "arzdesk-logo-v1.png"),
+    external: openExternal,
+  });
+  function follow(target) {
+    const next = destination(target);
+    if (next.kind === "online") void online.open(next.url);
+    else if (next.kind === "external") void openExternal(next.url);
+    else if (next.kind === "device") {
+      window.show();
+      window.focus();
+    }
+  }
+  window.once("closed", () => online.returnToDevice());
   window.webContents.session.setPermissionRequestHandler(
     (_webContents, _permission, callback) => callback(false),
   );
@@ -123,23 +143,14 @@ async function boot() {
     );
   window.once("ready-to-show", () => window.show());
   window.webContents.setWindowOpenHandler(({ url }) => {
-    void external(url);
+    follow(url);
     return { action: "deny" };
   });
   window.webContents.on("will-navigate", (event, target) => {
-    const url = new URL(target);
-    if (
-      url.protocol === "arzdesk:" &&
-      url.hostname === "local" &&
-      url.pathname === "/offline"
-    )
+    if (destination(target).kind === "device" && target.startsWith(HOME))
       return;
     event.preventDefault();
-    if (url.protocol === "arzdesk:" && url.hostname === "local") {
-      void external(WEB + url.pathname + url.search);
-    } else {
-      void external(target);
-    }
+    follow(target);
   });
   window.webContents.on("console-message", (event) =>
     console.log("DESKTOP_CONSOLE", event.message),
@@ -150,7 +161,10 @@ async function boot() {
   await window.loadURL(HOME);
   if (smokeMode) {
     try {
-      await require("./smoke.cjs")(window, process.env.ARZDESK_SMOKE_PROFILE);
+      if (process.env.ARZDESK_SMOKE_PHASE === "online")
+        await require("./online-smoke.cjs")(window, online, externalTargets);
+      else
+        await require("./smoke.cjs")(window, process.env.ARZDESK_SMOKE_PROFILE);
       if (outbound.length)
         throw Error(
           "Desktop attempted network requests: " + outbound.join(", "),
