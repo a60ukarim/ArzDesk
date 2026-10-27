@@ -120,7 +120,8 @@ export function getApprovedRelease(
       ].includes(origin.hostname)
     )
       return null;
-    const objectKey = `releases/${release.version}/${release.sha256}/${release.fileName}`;
+    // The owner uploaded the verified, versioned files at the bucket root.
+    const objectKey = release.fileName;
     return {
       ...release,
       objectKey,

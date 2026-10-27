@@ -17,8 +17,18 @@ for (const platform of desktopPlatforms) {
     Number(response.headers.get("content-length")) !== release.bytes
   )
     throw Error(`${platform}: missing file or incorrect length`);
-  if (!response.headers.get("content-disposition")?.includes(release.fileName))
-    throw Error(`${platform}: missing attachment filename`);
+  const disposition = response.headers.get("content-disposition");
+  // Dashboard uploads use binary MIME type, which prompts a download without
+  // Content-Disposition. If attachment metadata exists, its filename must match.
+  if (
+    disposition
+      ? !disposition.includes(release.fileName)
+      : response.headers.get("content-type")?.split(";")[0].trim() !==
+        "application/octet-stream"
+  )
+    throw Error(
+      `${platform}: missing binary download type or incorrect attachment filename`,
+    );
   const hash = createHash("sha256");
   let bytes = 0;
   for await (const chunk of response.body) {

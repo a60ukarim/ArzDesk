@@ -37,12 +37,10 @@ describe("public installer gate", () => {
       ).toBeNull();
     }
   });
-  it("builds immutable, hash-bound R2 URLs and branded site links", () => {
+  it("builds versioned R2 URLs for the uploaded files and branded site links", () => {
     const r = getApprovedRelease("windows", approved(), base);
     expect(r?.downloadPath).toBe("/download/windows");
-    expect(r?.url).toBe(
-      `${base}/releases/0.7.0-beta.2/${"b".repeat(64)}/ArzDesk-Setup-0.7.0-beta.2-x64.exe`,
-    );
+    expect(r?.url).toBe(`${base}/ArzDesk-Setup-0.7.0-beta.2-x64.exe`);
   });
   it("rejects missing, failed, partial, future or duplicated approvals", () => {
     const partial = approved();

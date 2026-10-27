@@ -25,7 +25,7 @@ test("download hub shows mobile install routes and honest desktop status", async
     expect(response.status()).toBe(release ? 307 : 503);
     expect(response.headers().location).toBe(
       release
-        ? `${process.env.ARZDESK_RELEASES_BASE_URL || "https://pub-53bc8476c2234ed0be7e02fb5c528d42.r2.dev"}/releases/${release.version}/${release.sha256}/${release.fileName}`
+        ? `${process.env.ARZDESK_RELEASES_BASE_URL || "https://pub-53bc8476c2234ed0be7e02fb5c528d42.r2.dev"}/${release.fileName}`
         : undefined,
     );
   }
@@ -165,7 +165,9 @@ for (const outcome of ["accepted", "dismissed"] as const) {
         "data-prompt-called",
         "yes",
       );
-      await expect(page.getByRole("status")).toContainText(
+      await expect(
+        page.locator("#install-android-steps").getByRole("status"),
+      ).toContainText(
         outcome === "accepted"
           ? "Installation accepted"
           : "Installation was cancelled",

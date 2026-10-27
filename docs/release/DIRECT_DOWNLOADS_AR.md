@@ -14,13 +14,13 @@
 
 هذا التعديل مسودة حتى اكتمال الخطوات التالية:
 
-1. ارفع الملفات المطابقة للبصمات إلى bucket `arzdesk-desktop-releases` بمسار `releases/<version>/<sha256>/<fileName>`.
-2. اضبط نوع الملف و`Content-Disposition: attachment; filename="<fileName>"`، ولا تستبدل ملفاً ببصمة مختلفة.
+1. ارفع الملفات المطابقة للبصمات إلى bucket `arzdesk-desktop-releases` بمسار `<fileName>` في جذر المساحة، كما رفعها المالك.
+2. الملفات المرفوعة تستخدم `application/octet-stream` لتبدأ كتنزيل. عند وجود Content-Disposition، يجب أن يطابق اسم الملف. لا تستبدل نسخة منشورة ببصمة مختلفة.
 3. فعّل الوصول إلى bucket الإصدار فقط. الأصل المسموح هو `https://pub-53bc8476c2234ed0be7e02fb5c528d42.r2.dev`. لا يلزم تغيير نطاق Workers أو DNS الشركة.
-4. شغّل `node --import tsx scripts/verify-installer-downloads.ts`. ينزّل كل ملف ويفحص status والحجم والبصمة واسم attachment ويرفض التحويلات.
+4. شغّل `node --import tsx scripts/verify-installer-downloads.ts`. ينزّل كل ملف ويفحص status والحجم والبصمة ونوع التنزيل أو اسم attachment ويرفض التحويلات.
 5. بعد نجاح التحقق، ادمج التعديل وتحقق من نشر Vercel ومن أزرار `/download/windows` و`/download/mac-intel` و`/download/mac-arm64` على الموقع الرسمي.
 
-حالة الإعداد عند كتابة المسودة: الملفات المحلية متحققة البصمات؛ رفع R2 والتحقق من التنزيل العام لم يكتمل. لا تدمج المسودة قبل نجاحهما.
+رفع المالك الملفات الثلاثة إلى جذر R2؛ الأحجام وETag تطابق الملفات المفحوصة. تم تفعيل managed domain. يجب إتمام قراءة البايتات العامة والتحقق من SHA-256 قبل دمج تفعيل الأزرار.
 
 ## حماية البيانات
 
