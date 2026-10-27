@@ -8,6 +8,9 @@ test("public product page has readable calls to action and fits mobile", async (
     page.getByRole("heading", { name: "Make room for what matters." }),
   ).toBeVisible();
 
+  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
+  await expect(page.getByText(/open[- ]source/i)).toHaveCount(0);
+
   const buttons = [
     {
       label: "Install ArzDesk",
@@ -32,12 +35,6 @@ test("public product page has readable calls to action and fits mobile", async (
       href: "/download",
       color: "rgb(255, 255, 255)",
       background: "rgb(24, 24, 24)",
-    },
-    {
-      label: "Explore the source",
-      href: "https://github.com/a60ukarim/ArzDesk",
-      color: "rgb(24, 24, 24)",
-      background: "rgba(0, 0, 0, 0)",
     },
   ];
 

@@ -4,7 +4,6 @@ import Link from "next/link";
 import "./about.css";
 import {
   ArrowRight,
-  ArrowUpRight,
   CheckCircle2,
   Cloud,
   Download,
@@ -16,12 +15,12 @@ import {
 export const metadata: Metadata = {
   title: "ArzDesk — Organize your work, online or offline",
   description:
-    "Meet ArzDesk by ArzCore: a free, open-source workspace for clients, projects and tasks. Work locally without internet after setup or collaborate through online accounts.",
+    "Meet ArzDesk by ArzCore: a free workspace for clients, projects and tasks. Work locally without internet after setup or collaborate through online accounts.",
   robots: { index: true, follow: true },
   openGraph: {
     title: "ArzDesk — Your work. One clear place.",
     description:
-      "A free, open-source workspace for clients, projects and tasks. Device work runs offline after setup.",
+      "A free workspace for clients, projects and tasks. Device work runs offline after setup.",
     type: "website",
   },
 };
@@ -77,14 +76,6 @@ export default function AboutPage() {
           aria-label="Main navigation"
           className="flex flex-wrap items-center gap-2 sm:gap-5"
         >
-          <a
-            className="rounded-lg px-3 py-2 text-xs font-bold hover:bg-neutral-200"
-            href="https://github.com/a60ukarim/ArzDesk"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open source <ArrowUpRight size={13} className="inline-block" />
-          </a>
           <Link
             href="/download"
             className="launch-cta launch-cta--dark rounded-lg bg-[#181818] px-4 py-3 text-xs font-bold text-white hover:bg-neutral-700"
@@ -109,7 +100,7 @@ export default function AboutPage() {
           <div className="relative grid items-center gap-12 md:grid-cols-[1.2fr_0.8fr]">
             <div className="max-w-2xl">
               <span className="inline-block rounded-full border border-white/30 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.17em] text-neutral-200">
-                Free · Open source · Desktop & mobile
+                Free · Desktop & mobile
               </span>
               <h1 className="mt-7 text-[clamp(38px,6.5vw,76px)] font-black leading-[1.04] tracking-[-0.045em]">
                 Make room for what matters.
@@ -303,14 +294,6 @@ export default function AboutPage() {
           >
             Choose your download <ArrowRight size={16} />
           </Link>
-          <a
-            href="https://github.com/a60ukarim/ArzDesk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="launch-cta launch-cta--outline inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-6 py-4 text-xs font-extrabold hover:bg-neutral-200"
-          >
-            Explore the source <ArrowUpRight size={16} />
-          </a>
         </div>
       </section>
 
@@ -320,7 +303,7 @@ export default function AboutPage() {
             ArzDesk · Built by ArzCore Technologies
           </span>
           <span className="text-xs font-medium text-neutral-500">
-            Open-source software · MIT License
+            Your work. One clear place.
           </span>
         </div>
       </footer>

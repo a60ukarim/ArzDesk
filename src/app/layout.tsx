@@ -22,8 +22,7 @@ export const metadata: Metadata = {
     default: "ArzDesk — Your work, in one place",
     template: "%s · ArzDesk",
   },
-  description:
-    "An open-source workspace for clients, projects and the people behind them.",
+  description: "A workspace for clients, projects and the people behind them.",
   robots: { index: false, follow: false },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "ArzDesk", statusBarStyle: "default" },

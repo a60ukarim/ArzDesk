@@ -42,9 +42,10 @@ export default function Page() {
           <Monitor />
           <h2>Windows &amp; Mac</h2>
           <p>
-            Visit the download page and choose the Windows EXE or the Mac DMG
-            for your device. Install it, then open ArzDesk from your desktop,
-            Start menu or Applications folder.
+            Choose the Windows installer (.exe) or the Mac disk image (.dmg)
+            from our download page. On Windows, run the installer. On Mac, open
+            the disk image and drag ArzDesk to Applications. Then open ArzDesk
+            from the Start menu or Applications folder.
           </p>
           <Link className="btn btn-outline" href="/download">
             Desktop downloads
@@ -54,16 +55,20 @@ export default function Page() {
           <Smartphone />
           <h2>Android</h2>
           <p>
-            Open this address in Chrome. Tap the browser menu, then{" "}
-            <strong>Install app</strong> or <strong>Add to Home screen</strong>.
+            Open this page in Chrome on your Android device. Tap the three-dot
+            menu (⋮), then choose <strong>Install app</strong> or{" "}
+            <strong>Add to Home screen</strong> and confirm. Then open ArzDesk
+            from its home screen icon.
           </p>
         </article>
         <article>
           <Smartphone />
           <h2>iPhone &amp; iPad</h2>
           <p>
-            Open this address in Safari. Tap <strong>Share</strong>, then{" "}
-            <strong>Add to Home Screen</strong> and confirm.
+            Open this page in Safari on your iPhone or iPad. Tap{" "}
+            <strong>Share</strong>, then choose{" "}
+            <strong>Add to Home Screen</strong> and tap <strong>Add</strong>.
+            Then open ArzDesk from its home screen icon.
           </p>
         </article>
       </section>

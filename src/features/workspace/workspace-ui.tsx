@@ -1246,7 +1246,7 @@ export function WorkspaceUI({
       )}
       <footer className="footer">
         <DeveloperCredits />
-        <span>ArzDesk · Open source</span>
+        <span>ArzDesk · Your work, in one place</span>
       </footer>
     </main>
   );
