@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { getWorkspaceReturn } from "@/lib/workspace-return";
 
 export function AccountBack() {
   const router = useRouter();
@@ -10,18 +11,7 @@ export function AccountBack() {
       aria-label="Back"
       className="back-workspace"
       onClick={() => {
-        let target = "/cloud";
-        try {
-          const saved = sessionStorage.getItem("arzdesk-account-return") || "";
-          // Only known local application pages are valid return destinations.
-          if (
-            /^\/w\/[a-zA-Z0-9-]+\/(overview|clients|projects|tasks|team|settings)(?:[?#]|$)/.test(
-              saved,
-            ) ||
-            saved === "/workspaces"
-          )
-            target = saved;
-        } catch {}
+        const target = getWorkspaceReturn("account", "/cloud");
         router.replace(target);
       }}
     >

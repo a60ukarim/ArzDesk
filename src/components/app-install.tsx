@@ -4,6 +4,7 @@ import { useState, useSyncExternalStore } from "react";
 import { Download, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { useClientReady } from "@/lib/use-client-ready";
+import { getWorkspaceReturn } from "@/lib/workspace-return";
 import {
   getInstallPrompt,
   subscribeInstallPrompt,
@@ -29,6 +30,9 @@ function subscribe(notify: () => void) {
 }
 export function AppInstall() {
   const ready = useClientReady();
+  const workspaceHref = ready
+    ? getWorkspaceReturn("install", "/offline")
+    : "/offline";
   const isInstalled = useSyncExternalStore(subscribe, installed, () => false);
   const prompt = useSyncExternalStore(
     subscribeInstallPrompt,
@@ -50,7 +54,7 @@ export function AppInstall() {
           ArzDesk is installed on this device.
         </p>
         <Button asChild variant="outline">
-          <Link href="/offline">
+          <Link href={workspaceHref}>
             Open workspace
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
@@ -72,7 +76,7 @@ export function AppInstall() {
           settings.
         </p>
         <Button asChild variant="outline">
-          <Link href="/offline">Continue in browser</Link>
+          <Link href={workspaceHref}>Continue in browser</Link>
         </Button>
       </>
     );
@@ -117,7 +121,7 @@ export function AppInstall() {
         </p>
       )}
       <Button asChild variant="outline">
-        <Link href="/offline">
+        <Link href={workspaceHref}>
           Open workspace
           <ArrowRight size={16} />
         </Link>
